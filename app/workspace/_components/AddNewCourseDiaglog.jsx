@@ -1,4 +1,5 @@
-import React from 'react'
+'use client'
+import React, { useState } from 'react'
 import {
   Dialog,
   DialogContent,
@@ -7,6 +8,18 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog"
+import { Input } from '@/components/ui/input'
+import { Textarea } from '@/components/ui/textarea'
+import { Switch } from '@/components/ui/switch'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
+import { Sparkle } from 'lucide-react'
+import { Button } from '@/components/ui/button'
 
 function AddNewCourseDiaglog({ children }) {
   // Normalize children and pick the first valid React element so Radix's
@@ -15,6 +28,24 @@ function AddNewCourseDiaglog({ children }) {
   const childElement = React.Children.toArray(children).find((c) =>
     React.isValidElement(c)
   )
+
+  const [formData, setFormData]= useState({
+    name:'',
+    description:'',
+    includeVideo:false,
+    noOfChapters:1,
+    category:'',
+    level:'',
+  });
+  const onHandleInputChange=(field,value)=>{
+    setFormData(prev=>({
+      ...prev,[field]:value
+    }) )
+    console.log(formData)
+  }
+  const onGenarate=()=>{
+    console.log(formData)
+  }
 
   return (
     <Dialog>
@@ -31,10 +62,61 @@ function AddNewCourseDiaglog({ children }) {
 
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Are you absolutely sure?</DialogTitle>
-          <DialogDescription>
-            This action cannot be undone. This will permanently delete your
-            account and remove your data from our servers.
+          <DialogTitle>Create New Course using AI  </DialogTitle>
+          <DialogDescription asChild>
+         <div className=' flex flex-col gap-4 mt-3'>
+       <div>
+        <label>
+          Course Name
+        </label>
+        <Input placeholder="Enter course name" onChange={(event)=>onHandleInputChange('name',event?.target.value)} />
+  
+          </div>
+            <div>
+        <label>
+          Course Description (optional)
+        </label>
+        <Textarea  placeholder="Course Description"onChange={(event)=>onHandleInputChange('description',event?.target.value)}  />
+  
+          </div>
+            <div>
+        <label>
+          Number of Chapters
+        </label>
+        <Input placeholder="Enter number the of Chapters"  type="number" onChange={(event)=>onHandleInputChange('noOfChapters',event?.target.value)} />
+  
+          </div>
+          <div className=' flex gap-3 items-center'>
+            <label> Include video</label>
+            <Switch    
+                      onCheckedChange={()=>onHandleInputChange('includeVideo',!formData?.includeVideo)}/>
+          </div>
+          <div>
+            <label>Difficulty  Level</label>
+            <Select className='mt-1' onValueChange={(value)=>onHandleInputChange('level',value)}>
+  <SelectTrigger className="w-full">
+    <SelectValue  className="" placeholder="Diificulty Level" />
+  </SelectTrigger>
+  <SelectContent>
+    <SelectItem value="beginner">Beginner</SelectItem>
+    <SelectItem value="moderate">Moderate</SelectItem>
+    <SelectItem value="advanced">Advanced</SelectItem>
+  </SelectContent>
+</Select>
+          </div>
+             <div>
+        <label>
+          Category
+        </label>
+        <Input placeholder="Category  (Separated by comma)"  onChange={(event)=>onHandleInputChange('category',event?.target.value)}  />
+   
+          </div>
+          <div>
+            <Button onClick={onGenarate} className="mt-5 w-full">
+             <Sparkle /> Generate Course
+            </Button>
+          </div>
+         </div>
           </DialogDescription>
         </DialogHeader>
       </DialogContent>
