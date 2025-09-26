@@ -16,6 +16,7 @@ import { Button } from '@/components/ui/button'
 import { Book, Compass, icons, LayoutDashboard, PencilRulerIcon, UserCircle2Icon } from 'lucide-react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
+import AddNewCourseDiaglog from './AddNewCourseDiaglog'
 function AppSideBar() {
     const  SideBarOptions=[{
         title:"Dashboard",
@@ -46,13 +47,14 @@ function AppSideBar() {
 const path = usePathname();
   return (
    
-    <Sidebar className={'pt-'}>
+    <Sidebar className={''}>
       <SidebarHeader >
         <Image src={'/logo.svg'}  alt='logo' width={120} height={100} />
       </SidebarHeader>
       <SidebarContent>
         <SidebarGroup >
-            <Button> Create New Course</Button>
+          <AddNewCourseDiaglog>     <Button> Create New Course</Button></AddNewCourseDiaglog>
+       
         </SidebarGroup>
         <SidebarGroup >
             <SidebarGroupContent>
