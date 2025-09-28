@@ -1,57 +1,119 @@
+import { db } from '@/config/db';
+import { coursesTable } from '@/config/schema';
+import { currentUser } from '@clerk/nextjs/server';
 
-import {GoogleGenAI} from '@google/genai';
-// ...existing code...
+import {
+       GoogleGenAI,
+     } from '@google/genai';
+import { uuid } from 'drizzle-orm/gel-core';
+import { NextResponse } from 'next/server';
 
-// Function to test if the Gemini API key is working
-export async function testGeminiApiKey(apiKey) {
-  try {
-    const testAi = new GoogleGenAI({ apiKey });
-    const response = await testAi.models.generateContent({
-      model: 'gemini-2.0-flash-001',
-      contents: 'Test',
-    });
-    if (response && response.text) {
-      return true;
-    } else {
-      return false;
-    }
-  } catch (error) {
-    return false;
+
+     const PROMPT=`Genrate Learning Course depends on following details. In which Make sure to add Course Name, Description,Course Banner Image Prompt (Create a modern, flat-style 2D digital illustration representing user Topic. Include UI/UX elements such as mockup screens, text blocks, icons, buttons, and creative workspace tools. Add symbolic elements related to user Course, like sticky notes, design components, and visual aids. Use a vibrant color palette (blues, purples, oranges) with a clean, professional look. The illustration should feel creative, tech-savvy, and educational, ideal for visualizing concepts in user Course) for Course Banner in 3d format Chapter Name, , Topic under each chapters , Duration for each chapters etc, in JSON format only
+
+Schema:
+
+{
+  "course": {
+    "name": "string",
+    "description": "string",
+    "category": "string",
+    "level": "string",
+    "includeVideo": "boolean",
+    "noOfChapters": "number",
+
+"bannerImagePrompt": "string",
+    "chapters": [
+      {
+        "chapterName": "string",
+        "duration": "string",
+        "topics": [
+          "string"
+        ],
+     
+      }
+    ]
   }
 }
 
-// Example usage:
-// testGeminiApiKey('YOUR_API_KEY');
+, User Input: 
 
-// Simple React button to test Gemini API key
-import React, { useState } from 'react';
+`
+export async function POST(req) {
+  try {
+    const { courseId, ...formData } = await req.json();
+    const user = await currentUser();
 
-export function GeminiApiKeyTestButton() {
-  const [apiKey, setApiKey] = useState('');
-  const [result, setResult] = useState(null);
-  const [loading, setLoading] = useState(false);
+    if (!process.env.GEMINI_API_KEY) {
+      console.error('Missing GEMINI_API_KEY');
+      return NextResponse.json({ error: 'Server misconfiguration: missing GEMINI_API_KEY' }, { status: 500 });
+    }
 
-  const handleTest = async () => {
-    setLoading(true);
-    const isValid = await testGeminiApiKey(apiKey);
-    setResult(isValid ? 'API Key is valid!' : 'API Key is invalid.');
-    setLoading(false);
-  };
+    const ai = new GoogleGenAI({
+      apiKey: process.env.GEMINI_API_KEY,
+    });
 
-  return (
-    <div style={{ padding: 20 }}>
-      <h2>Test Gemini API Key</h2>
-      <input
-        type="text"
-        value={apiKey}
-        onChange={e => setApiKey(e.target.value)}
-        placeholder="Enter Gemini API Key"
-        style={{ width: 300, marginRight: 10 }}
-      />
-      <button onClick={handleTest} disabled={loading}>
-        {loading ? 'Testing...' : 'Test API Key'}
-      </button>
-      {result && <div style={{ marginTop: 20 }}>{result}</div>}
-    </div>
-  );
-}
+    const config = {
+      responseMimeType: 'text/plain',
+    };
+
+    const model = 'gemini-2.0-flash';
+
+    const contents = [
+      {
+        role: 'user',
+        parts: [
+          {
+            text: PROMPT + JSON.stringify(formData),
+          },
+        ],
+      },
+    ];
+
+    const response = await ai.models.generateContent({ model, config, contents });
+
+    // Defensive checks for the AI response structure
+    const rawText = response?.candidates?.[0]?.content?.parts?.[0]?.text;
+    if (!rawText || typeof rawText !== 'string') {
+      console.error('AI response missing expected text:', response);
+      return NextResponse.json({ error: 'AI returned an unexpected response' }, { status: 500 });
+    }
+
+    console.log('AI raw response:', rawText);
+
+    // Try to extract a JSON object from the AI reply. The model may include markdown fences or extra text.
+    let jsonString = rawText.replace(/```json/g, '').replace(/```/g, '').trim();
+
+    // If that didn't produce valid JSON, try to extract text between the first { and the last }
+    if (!jsonString.startsWith('{')) {
+      const first = rawText.indexOf('{');
+      const last = rawText.lastIndexOf('}');
+      if (first !== -1 && last !== -1 && last > first) {
+        jsonString = rawText.substring(first, last + 1);
+      }
+    }
+
+    let parsed;
+    try {
+      parsed = JSON.parse(jsonString);
+    } catch (parseErr) {
+      console.error('Failed to parse AI JSON:', parseErr, 'extracted:', jsonString);
+      return NextResponse.json({ error: 'Failed to parse AI response as JSON', details: parseErr.message }, { status: 500 });
+    }
+
+    // save to database
+    const result = await db.insert(coursesTable).values({
+      ...formData,
+      courseJson: parsed,
+      userEmail: user?.primaryEmailAddress?.emailAddress,
+      cid: courseId,
+    });
+
+    return NextResponse.json({ courseId: courseId });
+  } catch (err) {
+    console.error('Unhandled error in /api/generate-course-layout:', err);
+    const message = err?.message || String(err);
+    return NextResponse.json({ error: 'Internal Server Error', message }, { status: 500 });
+  }
+     }
+     

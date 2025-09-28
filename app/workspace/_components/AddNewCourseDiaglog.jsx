@@ -18,8 +18,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import { Sparkle } from 'lucide-react'
+import { Loader2Icon, Sparkle } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import axios from 'axios'
+import { v4 as uuidv4 } from 'uuid';
+import { useRouter } from 'next/navigation'
 
 function AddNewCourseDiaglog({ children }) {
   // Normalize children and pick the first valid React element so Radix's
@@ -28,7 +31,7 @@ function AddNewCourseDiaglog({ children }) {
   const childElement = React.Children.toArray(children).find((c) =>
     React.isValidElement(c)
   )
-
+ const [loading, setLoading]= useState(false);
   const [formData, setFormData]= useState({
     name:'',
     description:'',
@@ -37,14 +40,32 @@ function AddNewCourseDiaglog({ children }) {
     category:'',
     level:'',
   });
+  const router = useRouter();
   const onHandleInputChange=(field,value)=>{
     setFormData(prev=>({
       ...prev,[field]:value
     }) )
     console.log(formData)
   }
-  const onGenarate=()=>{
+  const onGenarate= async()=>{
     console.log(formData)
+    const courseId=uuidv4();
+    try{
+
+    
+    setLoading(true);
+    const  result = await axios.post('/api/generate-course-layout',{...formData,
+      courseId:courseId
+
+    });
+    console.log(result.data)
+    setLoading(false)
+    router.push('/workspace/edit-course/'+result.data?.courseId);
+  }
+  catch(e){
+    setLoading(false)
+    console.log(e)
+  }
   }
 
   return (
@@ -112,8 +133,9 @@ function AddNewCourseDiaglog({ children }) {
    
           </div>
           <div>
-            <Button onClick={onGenarate} className="mt-5 w-full">
-             <Sparkle /> Generate Course
+            <Button onClick={onGenarate}  disabled={loading} className="mt-5 w-full">
+              {loading?<Loader2Icon className='animate-spin' /> :     <Sparkle />}
+          Generate Course
             </Button>
           </div>
          </div>
