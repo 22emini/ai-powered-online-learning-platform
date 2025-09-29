@@ -19,5 +19,6 @@ export const coursesTable = pgTable("courses", {
   userEmail: varchar("userEmail", { length: 255 })
     .references(() => usersTable.email)
     .notNull(),
+       bannerImageUrl: varchar().default(''),
 });
 //he  put catetgory incase backend does not work

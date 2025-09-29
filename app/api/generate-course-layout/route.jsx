@@ -5,6 +5,7 @@ import { currentUser } from '@clerk/nextjs/server';
 import {
        GoogleGenAI,
      } from '@google/genai';
+import axios from 'axios';
 import { uuid } from 'drizzle-orm/gel-core';
 import { NextResponse } from 'next/server';
 
@@ -52,6 +53,7 @@ export async function POST(req) {
        };
      
        const model = 'gemini-2.0-flash';
+          //  const model = 'gemini-2.5-pro';
      
        const contents = [
          {
@@ -75,13 +77,40 @@ export async function POST(req) {
       const RawJson=RawResp.replace('```json','').replace('```','');
       const JSONResp=JSON.parse(RawJson);
 
+      const ImagePrompt = JSONResp.course?.bannerImagePrompt
+
+
+      const bannerImageUrl = await GenerateImage(ImagePrompt);
+
+
+
       // save to database
       const result=  await db.insert(coursesTable).values({
         ...formData,
           courseJson:JSONResp,
           userEmail:user?.primaryEmailAddress?.emailAddress,
-          cid:courseId
+          cid:courseId,
+          bannerImageUrl :   bannerImageUrl 
       });
       return NextResponse.json({courseId:courseId});
      }
      
+ const GenerateImage=async(imagePrompt)=>{
+  const BASE_URL='https://aigurulab.tech';
+const result = await axios.post(BASE_URL+'/api/generate-image',
+        {
+            width: 1024,
+            height: 1024,
+            input: imagePrompt,
+            model: 'sdxl',//'flux'
+            aspectRatio:"16:9"//Applicable to Flux model only
+        },
+        {
+            headers: {
+                'x-api-key': process?.env?.AI_GURU_LAB_API, // Your API Key
+                'Content-Type': 'application/json', // Content Type
+            },
+        })
+console.log(result.data.image) //Output Result: Base 64 Image
+return result.data.image;  
+ }
