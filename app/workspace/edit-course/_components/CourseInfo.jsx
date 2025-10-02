@@ -1,10 +1,29 @@
+" use client"
 import { Button } from '@/components/ui/button';
-import { Book, Clock, Settings, TrendingUp } from 'lucide-react';
+import axios from 'axios';
+import { Book, Clock, Loader, Settings, TrendingUp } from 'lucide-react';
 import Image from 'next/image';
-import React from 'react'
+import React, { useState } from 'react'
 
 const CourseInfo = ({ course }) => {
     const courseLayout = course?.courseJson?.course;
+    const [ loading,setLoading] = useState(false)
+
+    const GenerateCourseContent = async () => {
+        setLoading(true)
+        try {
+            const result = await axios.post('/api/generate-course-content', {
+                courseJson: courseLayout,
+                courseTitle: course?.name,
+                courseId: course?.cid,
+            })
+            console.log(result.data)
+        } catch (e) {
+            console.error('Error generating course content', e)
+        } finally {
+            setLoading(false)
+        }
+    }
   return (
     <div className='   md:flex gap-5 justify-between p-5 shadow rounded-2xl'>
 <div className='  flex flex-col gap-5'>
@@ -33,7 +52,15 @@ const CourseInfo = ({ course }) => {
         </section>
         </div>     
     </div> 
-     <Button className={'max-w-sm mb-2'} > <Settings/> Generate Content</Button>  
+      <Button
+          className={'max-w-sm mb-2'}
+          onClick={GenerateCourseContent}
+          disabled={loading || !courseLayout}
+          aria-busy={loading}
+          type="button"
+      >
+          {loading ?  <Loader className='animate-spin' /> : (<><Settings/> Generate Content</>)}
+      </Button>
 </div>
 <div>
     <Image src={course?.bannerImageUrl}  alt='banner image url'  width={700} height={400} className=' mt-5 aspect-auto md:mt-0 h-[240px]  object-cover rounded-2xl' />
