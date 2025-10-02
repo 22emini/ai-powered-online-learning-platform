@@ -41,59 +41,67 @@ Schema:
 
 `
 export async function POST(req) {
-     const {courseId,...formData} = await req.json();
- const user = await currentUser();
+  try {
+    const {courseId,...formData} = await req.json();
+    const user = await currentUser();
 
-       const ai = new GoogleGenAI({
-         apiKey: process.env.GEMINI_API_KEY,
-       });
-     
-       const config = {
-         responseMimeType: 'text/plain',
-       };
-     
-       const model = 'gemini-2.0-flash';
-          //  const model = 'gemini-2.5-pro';
-     
-       const contents = [
-         {
-           role: 'user',
-           parts: [
-             {
-               text: PROMPT+JSON.stringify(formData),
-             },
-           ],
-         },
-       ];
-     
-       const response = await ai.models.generateContent({
-         model,
-         config,
-         contents,
-       });
-     
-      console.log(response.candidates[0].content.parts[0].text);
-      const RawResp =response?.candidates[0]?.content?.parts[0]?.text
-      const RawJson=RawResp.replace('```json','').replace('```','');
-      const JSONResp=JSON.parse(RawJson);
+    const ai = new GoogleGenAI({
+      apiKey: process.env.GEMINI_API_KEY,
+    });
+  
+    const config = {
+      responseMimeType: 'text/plain',
+    };
+  
+    const model = 'gemini-2.0-flash';
+    //  const model = 'gemini-2.5-pro';
+  
+    const contents = [
+      {
+        role: 'user',
+        parts: [
+          {
+            text: PROMPT+JSON.stringify(formData),
+          },
+        ],
+      },
+    ];
+  
+    const response = await ai.models.generateContent({
+      model,
+      config,
+      contents,
+    });
+  
+    console.log('AI raw response:', response.candidates[0].content.parts[0].text);
+    const RawResp =response?.candidates[0]?.content?.parts[0]?.text
+    const RawJson=RawResp.replace('```json','').replace('```','');
+    let JSONResp;
+    try {
+      JSONResp=JSON.parse(RawJson);
+    } catch (parseError) {
+      console.error('Failed to parse AI response as JSON:', RawJson, parseError);
+      throw new Error('AI response was not valid JSON.');
+    }
 
-      const ImagePrompt = JSONResp.course?.bannerImagePrompt
+    const ImagePrompt = JSONResp.course?.bannerImagePrompt
 
+    const bannerImageUrl = await GenerateImage(ImagePrompt);
 
-      const bannerImageUrl = await GenerateImage(ImagePrompt);
-
-
-
-      // save to database
-      const result=  await db.insert(coursesTable).values({
-        ...formData,
-          courseJson:JSONResp,
-          userEmail:user?.primaryEmailAddress?.emailAddress,
-          cid:courseId,
-          bannerImageUrl :   bannerImageUrl 
-      });
-      return NextResponse.json({courseId:courseId});
-     }
+    // save to database
+    const result=  await db.insert(coursesTable).values({
+      ...formData,
+        courseJson:JSONResp,
+        userEmail:user?.primaryEmailAddress?.emailAddress,
+        cid:courseId,
+        bannerImageUrl :   bannerImageUrl 
+    });
+    return NextResponse.json({courseId:courseId});
+  } catch (error) {
+    console.error('Error in generate-course-layout:', error);
+    return NextResponse.json({ error: error.message || 'Internal Server Error' }, { status: 500 });
+  }
+}
      
  const GenerateImage=async(imagePrompt)=>{
   const BASE_URL='https://aigurulab.tech';
