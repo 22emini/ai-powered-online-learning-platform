@@ -1,5 +1,9 @@
  import { NextResponse } from "next/server";
 import { ai } from "../generate-course-layout/route";
+import axios from "axios";
+import { asc, eq } from "drizzle-orm";
+import { db } from "@/config/db";
+import { coursesTable } from "@/config/schema";
 
  const PROMPT =`
 Depends on Chapter name and Topic Generate content for each topic in HTML 
@@ -70,10 +74,22 @@ export async function POST(req) {
         parsed = { parseError: 'invalid JSON from AI', raw: raw };
       }
 
-      return parsed;
+    const youtubeData= await GetYoutubeVideo(chapter?.chapterName);
+
+      return {
+ youtubeVideo:youtubeData,
+ CousreContent: parsed ,
+
+      };
     });
 
+
+
     const CourseContent = await Promise.all(promises);
+
+      const dbResp = await db.update(coursesTable).set({
+          courseContent: CourseContent,
+        }).where(eq(coursesTable.cid, courseId));
 
     return NextResponse.json({
       courseName: courseTitle,
@@ -86,3 +102,31 @@ export async function POST(req) {
 }
 
 
+
+ const YOUTUBE_BASE_URL=' https://www.googleapis.com/youtube/v3/search'
+const GetYoutubeVideo= async(topic)=>{
+  const params={
+part:'snippet',
+q:topic,
+maxResult:4,
+type:'video',
+key:process.env.YOUTUBE_API_KEY 
+  }
+  const resp = await axios.get(YOUTUBE_BASE_URL,{params})
+  
+  const  youtubeVideoListResp=resp.data.items;
+  
+  const  youtubeVideoList=[];
+
+ youtubeVideoListResp.forEach(item=>{
+   const  data ={
+ videId:item.id?.videoId,
+ title:item?.snippet?.title
+
+   }
+   youtubeVideoList.push(data);
+ })
+ console.log("youtubeVideoList", youtubeVideoList)
+  return youtubeVideoList
+  
+}

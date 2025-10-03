@@ -3,11 +3,15 @@ import { Button } from '@/components/ui/button';
 import axios from 'axios';
 import { Book, Clock, Loader, Settings, TrendingUp } from 'lucide-react';
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
+
 import React, { useState } from 'react'
+import { toast } from 'sonner';
 
 const CourseInfo = ({ course }) => {
     const courseLayout = course?.courseJson?.course;
     const [ loading,setLoading] = useState(false)
+    const router = useRouter();
 
     const GenerateCourseContent = async () => {
         setLoading(true)
@@ -18,8 +22,12 @@ const CourseInfo = ({ course }) => {
                 courseId: course?.cid,
             })
             console.log(result.data)
+            setLoading(false)
+            router.replace('/workspace')
+            toast('Course content generated successfully')
         } catch (e) {
             console.error('Error generating course content', e)
+            toast.error('Server side error')
         } finally {
             setLoading(false)
         }
@@ -34,14 +42,14 @@ const CourseInfo = ({ course }) => {
         <Clock  className=' text-blue-500'/>
         <section>
             <h2 className=' font-bold'>Duration</h2>
-            <h2> 2 Hours</h2 >
+            <h2> 3{courseLayout?.duration}hours</h2 >
         </section>
         </div>   
         <div className=' flex gap-1 items-center p-2 rounded-lg  shadow' >
         <Book  className=' text-green-500'/>
         <section>
             <h2 className=' font-bold'>Chapters</h2>
-            <h2> 2 Hours</h2>
+            <h2>{courseLayout?.noOfChapters} Chapters</h2>
         </section>
         </div>   
         <div className=' flex  gap-1 items-center p-2  rounded-lg  shadow' >
