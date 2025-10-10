@@ -9,7 +9,7 @@ export const usersTable = pgTable("users", {
 
 export const coursesTable = pgTable("courses", {
   id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
-  cid: varchar("cid", { length: 255 }).notNull(),
+  cid: varchar("cid", { length: 255 }).notNull().unique(),
   name: varchar("name", { length: 255 }),
   description: varchar("description", { length: 1000 }),
   noOfChapters: integer("  noOfChapters").notNull(),
@@ -22,4 +22,13 @@ export const coursesTable = pgTable("courses", {
     .notNull(),
        bannerImageUrl: varchar().default(''),
 });
-//he  put catetgory incase backend does not work
+
+export const enrollCourseTable=pgTable('enrollCourse',{
+  id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
+   cid:varchar('cid').references(()=>coursesTable.cid),
+  userEmail: varchar("userEmail", { length: 255 })
+    .references(() => usersTable.email)
+    .notNull(),
+   completedChapters: json()
+
+})

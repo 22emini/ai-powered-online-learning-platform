@@ -22,7 +22,7 @@ function CourseList() {
   return (
     <div className='mt-10'>
 
-      <h2 className='font-bold text-3xl'>Course List</h2>
+      <h2 className='font-bold text-xl'>Course List</h2>
       {courseList?.length==0 ? 
       <div className='flex p-7 items-center justify-center flex-col border rounded-xl mt-2 bg-secondary '>
 
@@ -33,7 +33,7 @@ function CourseList() {
 </AddNewCourseDiaglog>
 
       </div>:
-      <div className=" grid grid-col-1 md:grid-col-2 lg:grid-cols-2 xl:grid-col-3 gap-2">
+      <div className=" grid grid-col-1 md:grid-col-2 lg:grid-cols-2 xl:grid-col-3 gap-1">
        {courseList?.map((course, index) => (
         <CourseCard course={course}  key={index}/>
        ))}
