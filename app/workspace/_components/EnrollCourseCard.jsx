@@ -36,7 +36,7 @@ const EnrollCourseCard = ({ course, enrollCourse }) => {
 
         <h2 className=" flex justify-between text-sm text-primary">Progress <span>{CalculatePerProgress()}%</span></h2>
           <div className="text-xs text-gray-600"><Progress value={CalculatePerProgress()} /></div>
-          <Link href={'/workspace/course/'+ course?.cid} >
+          <Link href={'/workspace/view-course/'+ course?.cid} >
               <Button className={'w-full mt-3'}><PlayCircle /> Continue learnig</Button>
           </Link>
 

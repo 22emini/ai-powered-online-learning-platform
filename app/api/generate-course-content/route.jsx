@@ -78,7 +78,7 @@ export async function POST(req) {
 
       return {
  youtubeVideo:youtubeData,
- CousreContent: parsed ,
+ CourseContent: parsed ,
 
       };
     });
@@ -120,9 +120,8 @@ key:process.env.YOUTUBE_API_KEY
 
  youtubeVideoListResp.forEach(item=>{
    const  data ={
- videId:item.id?.videoId,
- title:item?.snippet?.title
-
+     videoId:item.id?.videoId,
+     title:item?.snippet?.title
    }
    youtubeVideoList.push(data);
  })
