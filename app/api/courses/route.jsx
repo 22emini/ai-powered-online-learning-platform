@@ -1,5 +1,5 @@
 import { db } from "@/config/db";
-import { desc, eq } from "drizzle-orm";
+import { desc, eq, ne, sql } from "drizzle-orm";
 import { coursesTable } from "@/config/schema";
 import { NextResponse } from "next/server";
 import { currentUser } from "@clerk/nextjs/server";
@@ -10,6 +10,14 @@ export async function GET(req){
      const courseId = searchParams?.get('courseId');
  const user =  await currentUser();
 
+ if(courseId =='0'){
+     const result = await db.select().from(coursesTable).where(sql`${coursesTable.courseContent}::jsonb != '{}'::jsonb`);
+console.log(result);
+
+      // return the full list of courses (array) so the client can map over it
+      return NextResponse.json(result);
+
+ }
      if(courseId){
    const result = await  db.select().from(coursesTable).where(eq(coursesTable.cid,courseId));
 console.log(result);

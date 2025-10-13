@@ -12,7 +12,7 @@ const ChapterListSidebar = ({courseInfo}) => {
   const enrollCourse = courseInfo?.enrollCourse;
   const courseContent = courseInfo?.courses?.courseContent;
     const {selectedChapterIndex,setSelectedChapterIndex}= useContext(SelectChapterIndexContext)
-
+let  completedChapter = enrollCourse?.completedChapters ?? [];
   return (
     // Hide on small screens, fixed on md+ so content can scroll independently
     <nav aria-label="Chapters" className='hidden md:block fixed left-0 top-16 w-80 bg-secondary p-5 h-[calc(100vh-4rem)] overflow-y-auto'>
@@ -21,12 +21,12 @@ const ChapterListSidebar = ({courseInfo}) => {
         {courseContent?.map((chapter, index) => {
 
           return (
-            <AccordionItem className={'text-lg font-medium'} value={chapter?.CourseContent?.chapterName} key={index}  onClick={()=> setSelectedChapterIndex(index)}>
+            <AccordionItem className={`text-lg font-medium  ${completedChapter.includes(index) ? 'bg-green-50 text-green-800' : ''}`} value={chapter?.CourseContent?.chapterName} key={index}  onClick={()=> setSelectedChapterIndex(index)}>
               <AccordionTrigger>{index + 1 } . {chapter?.CourseContent?.chapterName}</AccordionTrigger>
               <AccordionContent asChild>
                 <div className=''>
-     {chapter?.CourseContent?.topics?.map((topic, index) => (
-                  <h2 className='p-3  rounded-lg my-1 bg-white' key={index}>{topic?.topic}</h2>
+     {chapter?.CourseContent?.topics?.map((topic, index_) => (
+                  <h2 className={`p-3  rounded-lg my-1 bg-white ${completedChapter.includes(index) ? 'bg-green-50 text-green-800' : 'bg-white'}`} key={index_}>{topic?.topic}</h2>
                 ))}
                 </div>
            

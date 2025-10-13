@@ -24,7 +24,7 @@ setCourse(result.data)
   return (
     <div>
       <CourseInfo course={course}  viewCourse={viewCourse}/>
-      <ChapterTopicList course={course}  />
+      <ChapterTopicList course={course}     refreshData={() => GetEnrolledCourseById()} />
     </div>
   )
 }

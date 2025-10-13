@@ -31,7 +31,7 @@ if(result.data.resp){
  };
 
   return (
-    <div className="rounded-xl overflow-hidden bg-white shadow-sm hover:shadow-lg transition-transform duration-200 ease-out hover:-translate-y-1">
+    <div className="rounded-xl mt-4 overflow-hidden bg-white shadow-sm hover:shadow-lg transition-transform duration-200 ease-out hover:-translate-y-1">
       <div className="relative">
         <Image
           src={course?.bannerImageUrl || '/online-education.png'}
