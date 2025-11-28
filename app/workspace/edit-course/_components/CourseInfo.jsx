@@ -5,13 +5,47 @@ import { Book, Clock, Loader, PlayCircle, Settings, TrendingUp } from 'lucide-re
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import React, { useState } from 'react'
+import React, { useMemo, useState } from 'react'
 import { toast } from 'sonner';
 
 const  CourseInfo = ({ course, viewCourse }) => {
     const courseLayout = course?.courseJson?.course;
     const [ loading,setLoading] = useState(false)
     const router = useRouter();
+
+    const durationLabel = useMemo(() => {
+        if (!courseLayout) return 'Duration not available';
+        if (courseLayout?.duration) return courseLayout.duration;
+
+        const chapters = courseLayout?.chapters || [];
+        const totalMinutes = chapters.reduce((total, chapter) => {
+            const durationText = chapter?.duration;
+            if (!durationText) return total;
+
+            const numericMatch = durationText.match(/[\d.]+/);
+            if (!numericMatch) return total;
+
+            const value = parseFloat(numericMatch[0]);
+            if (Number.isNaN(value)) return total;
+
+            const lowerCaseText = durationText.toLowerCase();
+            if (lowerCaseText.includes('min')) {
+                return total + value;
+            }
+            return total + value * 60;
+        }, 0);
+
+        if (!totalMinutes) return 'Duration not available';
+
+        if (totalMinutes >= 60) {
+            const hours = totalMinutes / 60;
+            return Number.isInteger(hours)
+                ? `${hours} hours`
+                : `${hours.toFixed(1)} hours`;
+        }
+
+        return `${Math.round(totalMinutes)} minutes`;
+    }, [courseLayout]);
 
     const GenerateCourseContent = async () => {
         setLoading(true)
@@ -42,7 +76,7 @@ const  CourseInfo = ({ course, viewCourse }) => {
         <Clock  className=' text-blue-500'/>
         <section>
             <h2 className=' font-bold'>Duration</h2>
-            <h2> 3{courseLayout?.duration}hours</h2 >
+            <h2>{durationLabel}</h2 >
         </section>
         </div>   
         <div className=' flex gap-1 items-center p-2 rounded-lg  shadow' >

@@ -23,6 +23,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip"
+import Image from "next/image";
 
 const SIDEBAR_COOKIE_NAME = "sidebar_state"
 const SIDEBAR_COOKIE_MAX_AGE = 60 * 60 * 24 * 7
@@ -240,7 +241,13 @@ function SidebarTrigger({
         toggleSidebar()
       }}
       {...props}>
-      <PanelLeftIcon />
+<div className="flex items-center gap-2  ml-12">
+
+<Image src={'/logo2.png'} alt='logo' width={50} height={50} className="rounded-full bg-[#0A1F3F]" />
+            
+            <span className=" font-bold bg-gradient-to-r from-[#0A1F3F] to-[#2A4F8C] bg-clip-text text-transparent">MindFluxAI</span>
+       
+</div>
       <span className="sr-only">Toggle Sidebar</span>
     </Button>
   );

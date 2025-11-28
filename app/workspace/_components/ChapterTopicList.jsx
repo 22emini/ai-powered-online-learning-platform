@@ -12,7 +12,7 @@ const ChapterTopicList = ({ course}) => {
 
         <div key={index} className='flex flex-col items-center'>
 
-            <div className='p-4 border shadow rounded-xl bg-primary text-white'>
+            <div className='p-4 border shadow rounded-xl bg-[#0A1F3F] text-white'>
 
                 <h2 className='text-center '>Chapter {index + 1}</h2>
 
