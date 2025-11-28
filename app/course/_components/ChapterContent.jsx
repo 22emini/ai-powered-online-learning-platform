@@ -160,7 +160,7 @@ const ChapterContent = ({ courseInfo, refreshData } = {}) => {
   }
 
   return (
-    <section className='flex-1 mt-14 w-full px-4 sm:px-6 lg:px-10 py-8 md:ml-80 xl:ml-96'>
+    <section className='flex-1 mt-28 w-full px-4 sm:px-6 lg:px-10 py-8 md:ml-80 xl:ml-96'>
       <div className='max-w-5xl mx-auto space-y-10'>
         <header className='rounded-[28px] border bg-white/90 px-6 py-6 shadow-sm space-y-5'>
           <div className='flex flex-wrap items-center justify-between gap-4'>
