@@ -134,7 +134,7 @@ export default function Home() {
                 className="mb-6 inline-flex items-center gap-2 rounded-full border border-blue-400/30 bg-blue-400/10 px-4 py-1.5 text-sm text-blue-300 backdrop-blur-sm"
               >
                 <Sparkles className="h-4 w-4" />
-                <span>Powered by Advanced AI Technology</span>
+                <span>Powered by Google Gemini</span>
               </motion.div>
 
               <motion.h1
@@ -156,18 +156,7 @@ export default function Home() {
                 Master any subject at your own pace with AI that understands how you learn best.
               </motion.p>
 
-              <motion.div
-                variants={fadeInUp}
-                className="flex flex-col items-center justify-center gap-4 sm:flex-row"
-              >
-                <Button size="lg" className="group bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 text-white transition-all shadow-lg hover:shadow-xl border-0">
-                  Start Learning Free
-                  <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
-                </Button>
-                <Button size="lg" variant="outline" className="border-2 border-blue-400/50 text-blue-300 hover:bg-blue-400/10 hover:text-white">
-                  Watch Demo
-                </Button>
-              </motion.div>
+          
 
               <motion.div
                 variants={fadeInUp}
@@ -391,20 +380,15 @@ export default function Home() {
                   viewport={{ once: true }}
                   transition={{ delay: 0.4 }}
                 >
-                  <Button
+    <Button
                     size="lg"
                     className="group bg-white text-blue-600 hover:bg-gray-100 shadow-xl hover:shadow-2xl transition-all border-0"
                   >
-                    Get Started Free
+                       <Link href="/workspace">   Get Started Free</Link>
+                 
                     <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
                   </Button>
-                  <Button
-                    size="lg"
-                    variant="outline"
-                    className="border-2 border-white/50 bg-transparent text-white hover:bg-white/10"
-                  >
-                    Schedule a Demo
-                  </Button>
+                
                 </motion.div>
               </div>
 
