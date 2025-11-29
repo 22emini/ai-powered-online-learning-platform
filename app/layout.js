@@ -23,7 +23,7 @@ const geistMono = Geist_Mono({
 
 export const metadata = {
   title: "MindFluxAI",
-  description: "made by Eminioluwa",
+  description: "Developed by Akinjide Akinrinade",
 };
 
 export default function RootLayout({ children }) {
