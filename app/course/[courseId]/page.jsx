@@ -5,6 +5,7 @@ import React, { useEffect, useState } from 'react'
 import ChapterContent from '../_components/ChapterContent'
 import { useParams } from 'next/navigation'
 import axios from 'axios'
+import AITutorChatbot from '@/components/ChatBot'
 
 const Course = () => {
   const {courseId} = useParams();
@@ -29,6 +30,7 @@ const Course = () => {
       <AppHeader hideSiebar={true} />
       <div className="flex gap-10 ">
         <ChapterListSidebar courseInfo={courseInfo} />
+          <AITutorChatbot courseId={courseId} />
         <ChapterContent courseInfo={courseInfo} />
       </div>
     </div>

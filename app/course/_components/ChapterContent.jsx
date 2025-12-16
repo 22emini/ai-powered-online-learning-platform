@@ -3,6 +3,7 @@ import { Button } from '@/components/ui/button';
 import { SelectChapterIndexContext } from '@/context/SelectChapterIndexContext';
 import axios from 'axios';
 import { CheckCircle, Download, X } from 'lucide-react';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogFooter, DialogTrigger } from '@/components/ui/dialog';
 import { useParams } from 'next/navigation';
 import React, { useContext, useEffect, useState } from 'react'
 import YouTube from 'react-youtube';
@@ -16,10 +17,16 @@ const ChapterContent = ({ courseInfo, refreshData } = {}) => {
   const [completedChapters, setCompletedChapters] = useState(enrollCourse?.completedChapters ?? []);
   const [loading, setLoading] = useState(false);
   const [downloading, setDownloading] = useState(false);
+  const [showQuiz, setShowQuiz] = useState(false);
+  const [quiz, setQuiz] = useState(null);
+  const [quizLoading, setQuizLoading] = useState(false);
+  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
+  const [userAnswers, setUserAnswers] = useState({});
+  const [quizResult, setQuizResult] = useState(null);
 
   const totalChapters = courseContent?.length ?? 0;
   const currentChapter = courseContent?.[selectedChapterIndex];
-  const topics = currentChapter?.CourseContent?.topics ?? [];
+  const topics = currentChapter?.CourseContent?.content || currentChapter?.CourseContent?.topics || [];
   const videoData = currentChapter?.youtubeVideo ?? [];
   const isChapterCompleted = completedChapters.includes(selectedChapterIndex);
   const completedCount = completedChapters.length;
@@ -50,6 +57,7 @@ const ChapterContent = ({ courseInfo, refreshData } = {}) => {
     }
   }
 
+
   const markChapterIncomplete = async () => {
     if (loading || !isChapterCompleted) return;
     setLoading(true);
@@ -70,6 +78,78 @@ const ChapterContent = ({ courseInfo, refreshData } = {}) => {
     } finally {
       setLoading(false);
     }
+  }
+
+  const onTakeQuiz = async () => {
+    setShowQuiz(true);
+    setCurrentQuestionIndex(0);
+    setUserAnswers({});
+    setQuizResult(null);
+
+    // If quiz already loaded for this chapter, don't fetch again?
+    // But we might have different chapters. We should check if quiz matches current chapterId/Index.
+    // For simplicity, let's fetch every time or check if quiz.chapterId matches.
+    // We don't have quiz.chapterId stored in state easily unless we store it.
+    // Let's just fetch/check.
+    
+    setQuizLoading(true);
+    try {
+        // Try Fetch
+        const fetchRes = await axios.post('/api/get-quiz', {
+            courseId: courseId,
+            chapterId: selectedChapterIndex
+        });
+
+        if (fetchRes.data.found) {
+            setQuiz(fetchRes.data.content);
+        } else {
+        // Generate
+        const genRes = await axios.post('/api/generate-quiz', {
+          courseId: courseId,
+          chapterId: selectedChapterIndex,
+          chapterContent: currentChapter
+        });
+        setQuiz(genRes.data?.content ?? genRes.data);
+        }
+    } catch (e) {
+        console.error(e);
+        toast.error('Failed to load quiz');
+        setShowQuiz(false); 
+    } finally {
+        setQuizLoading(false);
+    }
+  }
+
+  const handleOptionSelect = (option) => {
+    setUserAnswers(prev => ({
+        ...prev,
+        [currentQuestionIndex]: option
+    }))
+  }
+
+  const handleNextQuestion = () => {
+      if (currentQuestionIndex < (quiz?.questions?.length || 0) - 1) {
+          setCurrentQuestionIndex(prev => prev + 1);
+      } else {
+          submitQuiz();
+      }
+  }
+
+  const submitQuiz = () => {
+      let score = 0;
+      const total = quiz?.questions?.length || 0;
+      
+      quiz?.questions?.forEach((q, idx) => {
+          if (userAnswers[idx] === q.correctAnswer) {
+              score++;
+          }
+      });
+      
+      setQuizResult({
+          score: score,
+          total: total,
+          percentage: (score / total) * 100
+      });
   }
 
   const downloadCourseContent = () => {
@@ -211,6 +291,11 @@ const ChapterContent = ({ courseInfo, refreshData } = {}) => {
                 )}
                 {isChapterCompleted ? 'Mark incomplete' : 'Mark completed'}
               </Button>
+              <Button
+                  variant='outline'
+                  onClick={onTakeQuiz}>
+                  Take Quiz
+              </Button>
             </div>
           </div>
           <div className='flex flex-wrap gap-3 text-xs font-medium'>
@@ -311,6 +396,53 @@ const ChapterContent = ({ courseInfo, refreshData } = {}) => {
             </div>
           )}
         </section>
+
+        <Dialog open={showQuiz} onOpenChange={setShowQuiz}>
+        <DialogContent className='max-w-2xl'>
+            <DialogHeader>
+                <DialogTitle>Chapter Quiz</DialogTitle>
+                <DialogDescription>Test your knowledge on this chapter.</DialogDescription>
+            </DialogHeader>
+
+            {quizLoading ? (
+                 <div className='py-8 flex justify-center'>Loading Quiz...</div> 
+            ) : quizResult ? (
+                 <div className='space-y-4 py-4'>
+                    <h3 className='text-2xl font-bold'>{quizResult.percentage >= 70 ? 'Passed!' : 'Try Again'}</h3>
+                    <p>You scored {quizResult.score} out of {quizResult.total} ({quizResult.percentage.toFixed(0)}%)</p>
+                    <Button onClick={() => {setShowQuiz(false); setQuizResult(null); }}>Close</Button>
+                 </div>
+            ) : quiz && quiz.questions ? (
+                 <div className='space-y-6 py-4'>
+                    <div>
+                        <span className='text-sm text-muted-foreground'>Question {currentQuestionIndex + 1} of {quiz.questions.length}</span>
+                        <h3 className='text-lg font-semibold mt-2'>{quiz.questions[currentQuestionIndex].question}</h3>
+                    </div>
+                    <div className='space-y-2'>
+                        {quiz.questions[currentQuestionIndex].options.map((option, idx) => (
+                             <div 
+                                key={idx} 
+                                onClick={() => handleOptionSelect(option)}
+                                className={`p-3 border rounded-lg cursor-pointer transition-colors ${userAnswers[currentQuestionIndex] === option ? 'bg-primary text-primary-foreground' : 'hover:bg-muted'}`}
+                             >
+                                {option}
+                             </div>
+                        ))}
+                    </div>
+                 </div>
+            ) : (
+                <div>No quiz available.</div>
+            )}
+            
+            <DialogFooter>
+                {!quizLoading && !quizResult && quiz && quiz.questions && quiz.questions.length > 0 && (
+                  <Button onClick={handleNextQuestion} disabled={!userAnswers[currentQuestionIndex]}>
+                    {currentQuestionIndex < quiz.questions.length - 1 ? 'Next' : 'Submit'}
+                  </Button>
+                )}
+            </DialogFooter>
+        </DialogContent>
+      </Dialog>
       </div>
     </section>
   )

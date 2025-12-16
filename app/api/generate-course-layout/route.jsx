@@ -1,10 +1,7 @@
 import { db } from '@/config/db';
 import { coursesTable } from '@/config/schema';
 import { currentUser } from '@clerk/nextjs/server';
-
-import {
-       GoogleGenAI,
-     } from '@google/genai';
+import { GoogleGenAI } from '@google/genai';
 import { uuid } from 'drizzle-orm/gel-core';
 import { NextResponse } from 'next/server';
 import { Buffer } from 'buffer';
@@ -54,7 +51,7 @@ export async function POST(req) {
       responseMimeType: 'text/plain',
     };
   
-    const model = 'gemini-2.0-flash';
+    const model = 'gemini-2.5-flash';
     //  const model = 'gemini-2.5-pro';
   
     const contents = [

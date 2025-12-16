@@ -31,4 +31,13 @@ export const enrollCourseTable=pgTable('enrollCourse',{
     .notNull(),
    completedChapters: json()
 
+
 })
+
+export const chapterQuizzes = pgTable('chapterQuizzes', {
+  id: integer('id').primaryKey().generatedAlwaysAsIdentity(),
+  courseId: varchar('courseId').notNull(),
+  chapterId: integer('chapterId').notNull(),
+  content: json('content').notNull(),
+  createdAt: varchar('createdAt').notNull(),
+});
