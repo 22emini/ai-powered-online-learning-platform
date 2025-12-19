@@ -135,7 +135,48 @@ const ChapterContent = ({ courseInfo, refreshData } = {}) => {
       }
   }
 
-  const submitQuiz = () => {
+  // Analytics: Time Tracking
+  const startTimeRef = React.useRef(Date.now());
+  
+  useEffect(() => {
+    // Reset start time when chapter changes
+    startTimeRef.current = Date.now();
+
+    const interval = setInterval(() => {
+        const now = Date.now();
+        const diffSeconds = Math.floor((now - startTimeRef.current) / 1000);
+        
+        if (diffSeconds > 0) {
+            // Send time spent to API
+            axios.post('/api/analytics', {
+                courseId: courseId,
+                chapterId: selectedChapterIndex,
+                eventType: 'TIME_SPENT',
+                value: diffSeconds
+            }).catch(e => console.error("Analytics error", e));
+            
+            // Reset start time to avoid double counting
+            startTimeRef.current = Date.now();
+        }
+    }, 30000); // Update every 30 seconds
+
+    return () => {
+        clearInterval(interval);
+        // Send remaining time on unmount or chapter change
+        const now = Date.now();
+        const diffSeconds = Math.floor((now - startTimeRef.current) / 1000);
+        if (diffSeconds > 1) { // Only send if significant
+            axios.post('/api/analytics', {
+                courseId: courseId,
+                chapterId: selectedChapterIndex,
+                eventType: 'TIME_SPENT',
+                value: diffSeconds
+            }).catch(e => console.error("Analytics error", e));
+        }
+    };
+  }, [courseId, selectedChapterIndex]);
+
+  const submitQuiz = async () => {
       let score = 0;
       const total = quiz?.questions?.length || 0;
       
@@ -145,11 +186,25 @@ const ChapterContent = ({ courseInfo, refreshData } = {}) => {
           }
       });
       
+      const percentage = (score / total) * 100;
+
       setQuizResult({
           score: score,
           total: total,
-          percentage: (score / total) * 100
+          percentage: percentage
       });
+
+      // Analytics: Quiz Score
+      try {
+        await axios.post('/api/analytics', {
+            courseId: courseId,
+            chapterId: selectedChapterIndex,
+            eventType: 'QUIZ_SCORE',
+            value: score
+        });
+      } catch (e) {
+          console.error("Failed to save quiz score", e);
+      }
   }
 
   const downloadCourseContent = () => {

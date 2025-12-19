@@ -12,7 +12,7 @@ export async function GET(req){
 
  if(courseId =='0'){
      const result = await db.select().from(coursesTable).where(sql`${coursesTable.courseContent}::jsonb != '{}'::jsonb`);
-console.log(result);
+// console.log(result);
 
       // return the full list of courses (array) so the client can map over it
       return NextResponse.json(result);
@@ -20,13 +20,13 @@ console.log(result);
  }
      if(courseId){
    const result = await  db.select().from(coursesTable).where(eq(coursesTable.cid,courseId));
-console.log(result);
+// console.log(result);
 
      return NextResponse.json(result[0]);
      }
      else{
           const result = await db.select().from(coursesTable).where(eq(coursesTable.userEmail, user?.primaryEmailAddress?.emailAddress)).orderBy(desc(coursesTable.id))
-console.log(result);
+// console.log(result);
 
      return NextResponse.json(result);
      }

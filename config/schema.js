@@ -25,7 +25,7 @@ export const coursesTable = pgTable("courses", {
 
 export const enrollCourseTable=pgTable('enrollCourse',{
   id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
-   cid:varchar('cid').references(()=>coursesTable.cid),
+   cid:varchar('cid').notNull(),
   userEmail: varchar("userEmail", { length: 255 })
     .references(() => usersTable.email)
     .notNull(),
@@ -40,4 +40,14 @@ export const chapterQuizzes = pgTable('chapterQuizzes', {
   chapterId: integer('chapterId').notNull(),
   content: json('content').notNull(),
   createdAt: varchar('createdAt').notNull(),
+});
+
+export const userAnalyticsTable = pgTable('userAnalytics', {
+  id: integer('id').primaryKey().generatedAlwaysAsIdentity(),
+  userEmail: varchar('userEmail', { length: 255 }).notNull(),
+  courseId: varchar('courseId', { length: 255 }),
+  chapterId: integer('chapterId'),
+  eventType: varchar('eventType', { length: 50 }).notNull(), // 'TIME_SPENT', 'QUIZ_SCORE'
+  value: integer('value').notNull(), // seconds for time, score for quiz
+  createdAt: varchar('createdAt', { length: 50 }).notNull(),
 });

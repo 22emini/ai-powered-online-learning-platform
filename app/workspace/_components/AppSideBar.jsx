@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/sidebar"
 import Image from 'next/image'
 import { Button } from '@/components/ui/button'
-import { Book, Compass, icons, LayoutDashboard, LogOutIcon, PencilRulerIcon, UserCircle2Icon } from 'lucide-react'
+import { Book, ChartBar, Compass, icons, LayoutDashboard, LogOutIcon, PencilRulerIcon, UserCircle2Icon } from 'lucide-react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import AddNewCourseDiaglog from './AddNewCourseDiaglog'
@@ -28,6 +28,11 @@ function AppSideBar() {
         title:"My Learning",
         icon:Book,
         path:'/workspace/my-learning'
+    },
+    {
+        title:"Analytics",
+        icon:ChartBar,
+        path:'/workspace/analytics'
     },
     {
         title:"Explore Courses",

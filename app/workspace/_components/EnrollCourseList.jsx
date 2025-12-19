@@ -55,8 +55,8 @@ const EnrollCourseList = () => {
       const rows = Array.isArray(data) ? data : (Array.isArray(data?.data) ? data.data : []);
 
       const normalized = rows.map(r => normalizeRow(r));
-      console.log('enroll-course raw:', data);
-      console.log('enroll-course normalized:', normalized);
+      // console.log('enroll-course raw:', data);
+      // console.log('enroll-course normalized:', normalized);
 
       setEnrolledCourseList(normalized.filter(n => n.course));
     } catch (e) {
@@ -73,8 +73,8 @@ const EnrollCourseList = () => {
 
   return (
     <div className='mt-3'>
-      <h2 className='font-bold text-xl'> Continue Learning Courses</h2>
-      <div className=" grid grid-col-1 md:grid-col-2 lg:grid-cols-2 xl:grid-col-3 gap-2">
+      <h2 className='font-bold pb-4 text-xl'> Continue Learning Courses</h2>
+      <div className=" grid grid-col-1 md:grid-col-2 lg:grid-cols-3 xl:grid-col-3 gap-3">
 {
         enrolledCourseList.map((item, index) => (
           <EnrollCourseCard course={item.course} enrollCourse={item.enrollCourse} key={index} />

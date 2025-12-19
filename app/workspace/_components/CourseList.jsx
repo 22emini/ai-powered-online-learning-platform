@@ -16,7 +16,7 @@ function CourseList() {
   },[user])
    const GetCourseList = async ()=>{
     const result = await axios.get('/api/courses');
-    console.log(result.data)
+    // console.log(result.data)
     setCourseList(result.data)
    }
   return (
@@ -26,14 +26,14 @@ function CourseList() {
       {courseList?.length==0 ? 
       <div className='flex p-7 items-center justify-center flex-col border rounded-xl mt-2 bg-secondary '>
 
-<Image src="/online-education.png" width={80} height={80} alt="No courses" />
+<Image src="/new.png" width={80} height={80} alt="No courses"  className='rounded-full'/>
 <h2 className=' my-2 text-xl  font-bold'> Look like you  haven't  Registered any  courses yet  </h2>
 <AddNewCourseDiaglog>
   <Button> + Create yout first Courses </Button>
 </AddNewCourseDiaglog>
 
       </div>:
-      <div className=" grid grid-col-1 md:grid-col-2 lg:grid-cols-2 xl:grid-col-3 gap-1">
+      <div className=" grid grid-col-1 md:grid-col-2 lg:grid-cols-3 xl:grid-col-3 gap-1">
        {courseList?.map((course, index) => (
         <CourseCard course={course}  key={index}/>
        ))}
