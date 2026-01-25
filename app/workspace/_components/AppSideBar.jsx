@@ -58,7 +58,7 @@ const path = usePathname();
         <div className=' '>
         {/* <Image src={'/logo2.png'} alt='logo' width={50} height={50} className="rounded-full bg-[#0A1F3F]" />
             
-            <span className=" font-bold bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent">MindFluxAI</span> */}
+            <span className=" font-bold bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent">QuorifyAI</span> */}
         </div>
      
       </SidebarHeader>

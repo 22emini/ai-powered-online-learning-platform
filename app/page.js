@@ -82,9 +82,9 @@ export default function Home() {
             transition={{ duration: 0.2 }}
           >
             
-            <Image src={'/new.png'} alt='logo' width={50} height={42} className="rounded-full" />
+            <Image src={'/new.png'} alt='logo' width={60} height={60} className="rounded-full object-cover" />
             
-            <span className="text-xl font-bold bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent">MindFluxAI</span>
+            <span className="text-xl font-bold bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent">Quorify</span>
           </motion.div>
 
           <nav className="hidden items-center gap-8 md:flex">
@@ -433,14 +433,14 @@ export default function Home() {
             >
               <div className="mb-4 flex items-center gap-2">
                
-            <Image src={'/new.png'} alt='logo' width={50} height={42} className="rounded-full" />
+            <Image src={'/new.png'} alt='logo' width={50} height={50} className="rounded-full object-cover" />
             
-            <span className="text-xl font-bold bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent">MindFluxAI</span>
+            <span className="text-xl font-bold bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent">Quorify</span>
           
                
               </div>
               <p className="text-sm text-gray-400 leading-relaxed">
-                Empowering learners worldwide with AI-powered education technology.
+                AI that unlocks and amplifies your core learning potential.
               </p>
             </motion.div>
 
@@ -485,7 +485,7 @@ export default function Home() {
             viewport={{ once: true }}
             className="mt-12 border-t border-white/10 pt-8 text-center text-sm text-gray-400"
           >
-            <p>© 2025 MindFluxAI. All rights reserved.</p>
+            <p>© 2025 Quorify. All rights reserved.</p>
           </motion.div>
         </div>
       </footer>

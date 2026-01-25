@@ -22,8 +22,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata = {
-  title: "MindFluxAI",
-  description: "Developed by Akinjide Akinrinade",
+  title: "Quorify",
+  description: "AI that unlocks and amplifies your core learning potential.",
 };
 
 export default function RootLayout({ children }) {
