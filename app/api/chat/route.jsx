@@ -17,7 +17,7 @@ export async function POST(req) {
       return NextResponse.json({ error: "GEMINI_API_KEY is not configured" }, { status: 500 });
     }
 
-    const model = process.env.GEMINI_MODEL || 'gemini-2.5-flash';
+    const model = process.env.GEMINI_MODEL ||  'gemini-3-flash-preview';
 
     let systemPrompt = "You are a helpful and knowledgeable AI tutor. You help students with their courses and questions. Keep answers concise and helpful.";
 
