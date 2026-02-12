@@ -86,10 +86,7 @@ const path = usePathname();
         </SidebarGroup>
       </SidebarContent>
       <SidebarFooter>
-        <Button className='w-full justify-start'>
-          <LogOutIcon className='h-7 w-7'/>
-          <span><SignOutButton >Logout</SignOutButton></span>
-        </Button>
+        <span className=' justify-start'><SignOutButton ><div className='flex items-center gap-2 cursor-pointer hover:text-red-500 '> <LogOutIcon className='h-7 w-7'/>Logout</div></SignOutButton></span>
       </SidebarFooter>
     </Sidebar>
 

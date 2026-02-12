@@ -130,7 +130,7 @@ const page = () => {
           <div>No courses found.</div>
         )}
         {!loading && !error && courseList.map((course, index) => (
-          <CourseCard course={course}  key={index}/>
+          <CourseCard course={course}  key={index} refreshCourses={GetCourseList}/>
          ))}
         </div>
 

@@ -1,15 +1,44 @@
 import { Button } from '@/components/ui/button';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog"
 import axios from 'axios';
-import { Book, LoaderCircle, PlayCircle, Settings } from 'lucide-react';
+import { useUser } from '@clerk/nextjs';
+import { Book, LoaderCircle, PlayCircle, Settings, Trash } from 'lucide-react';
 import Image from 'next/image'
 import Link from 'next/link';
 import React, { useState } from 'react'
 import { toast } from 'sonner';
 
-const CourseCard = ({ course }) => {
+const CourseCard = ({ course, refreshCourses }) => {
+  const { user } = useUser();
   const [loading, setLoading]= useState(false)
   const courseJson = course?.courseJson?.course;
   const hasContent = Boolean(course?.courseContent?.length);
+
+  const [open, setOpen] = useState(false);
+
+  const handleDelete = async () => {
+    try {
+      setLoading(true);
+      await axios.delete('/api/courses?courseId=' + course?.cid);
+      toast.success('Course Deleted Successfully');
+      if(refreshCourses) refreshCourses();
+      setOpen(false);
+    } catch (e) {
+      console.error(e);
+      toast.error('Server error while deleting');
+    } finally {
+      setLoading(false);
+    }
+  }
+
  const onEnrollCourse = async () => {
    try {
      setLoading(true);
@@ -47,6 +76,31 @@ if(result.data.resp){
         <span className="absolute top-2 left-2 inline-flex items-center gap-2 bg-white/90 text-xs text-gray-800 px-1.5 py-0.5 rounded-md shadow-sm">
           <Book className="h-3.5 w-3.5 text-gray-700" />
           <span className="font-medium text-xs">{courseJson?.noOfChapters ?? 0} chapters</span>
+        </span>
+
+        <span className="absolute top-2 right-2 inline-flex items-center gap-2">
+            {course?.userEmail === user?.primaryEmailAddress?.emailAddress && 
+            <Dialog open={open} onOpenChange={setOpen}>
+              <DialogTrigger asChild>
+                <Button variant="outline" size="sm" className="h-7 w-7 p-0 bg-white/90 hover:bg-red-50">
+                    <Trash className="h-3.5 w-3.5 text-red-500" />
+                </Button>
+              </DialogTrigger>
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>Are you absolutely sure?</DialogTitle>
+                  <DialogDescription>
+                    This action cannot be undone. This will permanently delete your course and remove your data from our servers.
+                  </DialogDescription>
+                </DialogHeader>
+                <DialogFooter>
+                  <Button variant="outline" onClick={() => setOpen(false)}>Cancel</Button>
+                  <Button variant="destructive" onClick={handleDelete} disabled={loading}>
+                     {loading ? <LoaderCircle className="h-4 w-4 animate-spin" /> : 'Continue'}
+                  </Button>
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>}
         </span>
       </div>
 

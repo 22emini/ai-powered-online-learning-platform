@@ -245,7 +245,7 @@ function SidebarTrigger({
 
 <Image src={'/logo2.png'} alt='logo' width={50} height={50} className="rounded-full bg-[#0A1F3F]" />
             
-            <span className=" font-bold bg-gradient-to-r from-[#0A1F3F] to-[#2A4F8C] bg-clip-text text-transparent">QuorifyAI</span>
+            <span className=" font-bold bg-gradient-to-r from-[#0A1F3F] to-[#2A4F8C] bg-clip-text text-transparent">Quorify</span>
        
 </div>
       <span className="sr-only">Toggle Sidebar</span>
