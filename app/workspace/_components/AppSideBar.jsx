@@ -1,5 +1,5 @@
 'use client'
-import React, { use } from 'react'
+import React from 'react'
 import {
   Sidebar,
   SidebarContent,
@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/sidebar"
 import Image from 'next/image'
 import { Button } from '@/components/ui/button'
-import { Book, ChartBar, Compass, icons, LayoutDashboard, LogOutIcon, PencilRulerIcon, UserCircle2Icon } from 'lucide-react'
+import { Book, ChartBar, Compass, LayoutDashboard, LogOutIcon, PencilRulerIcon, UserCircle2Icon } from 'lucide-react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import AddNewCourseDiaglog from './AddNewCourseDiaglog'
@@ -73,7 +73,7 @@ const path = usePathname();
                     {SideBarOptions.map((item, index)=>(
                         <SidebarMenuItem key={index} >
                             <SidebarMenuButton asChild className={'p-5'}>
-                                <Link href={item.path} className={`text-[17px] ${path.includes(item.path)&&'text-[#1B3B6E] bg-purple-100'}`}> 
+                                <Link href={item.path} className={`text-[17px] ${path === item.path && 'text-[#1B3B6E] bg-purple-100'}`}> 
                                 <item.icon className='h-7 w-7'/>
                                 <span  className=''>{item.title}</span>
                                 </Link>
