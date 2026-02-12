@@ -2,7 +2,7 @@
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { useUser } from '@clerk/nextjs'
-
+import axios from 'axios'
 import { Search } from 'lucide-react'
 import Image from 'next/image'
 import React, { useEffect, useState } from 'react'
@@ -22,8 +22,8 @@ const page = () => {
     try {
       setLoading(true)
       setError(null)
-      const response = await fetch('/api/courses?courseId=0');
-      const data = await response.json();
+      const result = await axios.get('/api/courses?courseId=0')
+      const data = result.data
       // Normalize to array
       let normalized = []
       if (Array.isArray(data)) {

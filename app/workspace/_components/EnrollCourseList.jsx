@@ -1,5 +1,5 @@
 "use client"
-
+import axios from 'axios'
 import React, { useEffect, useState } from 'react'
 import EnrollCourseCard from './EnrollCourseCard';
 
@@ -49,21 +49,8 @@ const EnrollCourseList = () => {
   const GetEnrolledCourse = async () => {
     setLoading(true);
     try {
-      const response = await fetch('/api/enroll-course');
-      
-      if (!response.ok) {
-        console.error('Failed to fetch enrolled courses', response.statusText);
-        setEnrolledCourseList([]);
-        return;
-      }
-
-      const text = await response.text();
-      if (!text) {
-         setEnrolledCourseList([]);
-         return;
-      }
-
-      const data = JSON.parse(text);
+      const result = await axios.get('/api/enroll-course');
+      const data = result?.data;
       // If API returns an object with a data property, unwrap it
       const rows = Array.isArray(data) ? data : (Array.isArray(data?.data) ? data.data : []);
 

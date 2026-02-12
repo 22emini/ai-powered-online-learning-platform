@@ -1,6 +1,6 @@
  import { NextResponse } from "next/server";
 import { ai } from "../generate-course-layout/route";
-
+import axios from "axios";
 import { asc, eq } from "drizzle-orm";
 import { db } from "@/config/db";
 import { coursesTable } from "@/config/schema";
@@ -40,8 +40,7 @@ export async function POST(req) {
         responseMimeType: 'text/plain',
       };
 
-    const model =  process.env.GEMINI_MODEL || "gemini-2.5-flash"
-      const model = 'gemini-2.5-flash';
+    const model = 'gemini-3-flash-preview';
 
       const contents = [
         {
@@ -113,13 +112,9 @@ maxResult:4,
 type:'video',
 key:process.env.YOUTUBE_API_KEY 
   }
-  const url = new URL(YOUTUBE_BASE_URL.trim());
-  Object.keys(params).forEach(key => url.searchParams.append(key, params[key]));
-
-  const resp = await fetch(url);
-  const data = await resp.json();
+  const resp = await axios.get(YOUTUBE_BASE_URL,{params})
   
-  const  youtubeVideoListResp=data.items;
+  const  youtubeVideoListResp=resp.data.items;
   
   const  youtubeVideoList=[];
 

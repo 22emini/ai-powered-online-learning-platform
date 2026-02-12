@@ -20,7 +20,7 @@ import {
 } from "@/components/ui/select"
 import { Loader2Icon, Sparkle } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-
+import axios from 'axios'
 import { v4 as uuidv4 } from 'uuid';
 import { useRouter } from 'next/navigation'
 
@@ -54,20 +54,13 @@ function AddNewCourseDiaglog({ children }) {
 
     
     setLoading(true);
-    const response = await fetch('/api/generate-course-layout',{
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        ...formData,
-        courseId:courseId
-      })
+    const  result = await axios.post('/api/generate-course-layout',{...formData,
+      courseId:courseId
+
     });
-    const data = await response.json();
-    console.log(data)
+    console.log(result.data)
     setLoading(false)
-    router.push('/workspace/edit-course/'+data?.courseId);
+    router.push('/workspace/edit-course/'+result.data?.courseId);
   }
   catch(e){
     setLoading(false)
@@ -114,11 +107,11 @@ function AddNewCourseDiaglog({ children }) {
         <Input placeholder="Enter number the of Chapters"  type="number" onChange={(event)=>onHandleInputChange('noOfChapters',event?.target.value)} />
   
           </div>
-          {/* <div className=' flex gap-3 items-center'>
+          <div className=' flex gap-3 items-center'>
             <label> Include video</label>
             <Switch    
                       onCheckedChange={()=>onHandleInputChange('includeVideo',!formData?.includeVideo)}/>
-          </div> */}
+          </div>
           <div>
             <label>Difficulty  Level</label>
             <Select className='mt-1' onValueChange={(value)=>onHandleInputChange('level',value)}>

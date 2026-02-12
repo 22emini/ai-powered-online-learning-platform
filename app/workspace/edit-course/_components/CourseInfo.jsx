@@ -1,6 +1,6 @@
 " use client"
 import { Button } from '@/components/ui/button';
-
+import axios from 'axios';
 import { Book, Clock, Loader, PlayCircle, Settings, TrendingUp } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -50,19 +50,12 @@ const  CourseInfo = ({ course, viewCourse }) => {
     const GenerateCourseContent = async () => {
         setLoading(true)
         try {
-            const response = await fetch('/api/generate-course-content', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    courseJson: courseLayout,
-                    courseTitle: course?.name,
-                    courseId: course?.cid,
-                })
+            const result = await axios.post('/api/generate-course-content', {
+                courseJson: courseLayout,
+                courseTitle: course?.name,
+                courseId: course?.cid,
             })
-            const data = await response.json();
-            console.log(data)
+            console.log(result.data)
             setLoading(false)
             router.replace('/workspace')
             toast('Course content generated successfully')
