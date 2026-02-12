@@ -44,7 +44,7 @@ export async function POST(req) {
     }
     */
 
-    const model = process.env.GEMINI_MODEL || 'gemini-3-flash-preview';
+    const model = process.env.GEMINI_MODEL || 'gemini-2.5-flash';
     const config = { responseMimeType: "text/plain" };
     const contents = [
       {

@@ -41,6 +41,7 @@ export async function POST(req) {
       };
 
     const model =  process.env.GEMINI_MODEL || "gemini-2.5-flash"
+      const model = 'gemini-2.5-flash';
 
       const contents = [
         {
