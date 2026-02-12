@@ -48,9 +48,12 @@ export async function GET (req){
      const courseId = searchParams?.get('courseId');
 
      if(courseId){
-    const  result = await db.select().from(coursesTable)
+    if (!user || !user.primaryEmailAddress) {
+       return NextResponse.json([], { status: 200 });
+    }
+    const result = await db.select().from(coursesTable)
     .innerJoin(enrollCourseTable,eq(coursesTable.cid,enrollCourseTable.cid))
-    .where(and(eq(enrollCourseTable.userEmail,user?.primaryEmailAddress.emailAddress),eq(enrollCourseTable.cid,courseId)))
+    .where(and(eq(enrollCourseTable.userEmail,user.primaryEmailAddress.emailAddress),eq(enrollCourseTable.cid,courseId)))
     
     return NextResponse.json(result[0])
      }

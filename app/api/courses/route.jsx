@@ -22,6 +22,9 @@ export async function GET(req){
    const result = await  db.select().from(coursesTable).where(eq(coursesTable.cid,courseId));
 // console.log(result);
 
+     if (!result || result.length === 0) {
+        return NextResponse.json({ error: "Course not found" }, { status: 404 });
+     }
      return NextResponse.json(result[0]);
      }
      else{
