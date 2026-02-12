@@ -1,5 +1,5 @@
 import { ChevronUp, MessageCircleMoreIcon, Loader2, X, Send, Bot, User } from "lucide-react";
-import axios from "axios";
+
 import Image from "next/image";
 import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -31,14 +31,22 @@ export default function AITutorChatbot({ courseId }) {
         content: msg.text,
       }));
 
-      const response = await axios.post("/api/chat", {
-        messages: apiMessages,
-        courseId: courseId
+      const response = await fetch("/api/chat", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          messages: apiMessages,
+          courseId: courseId
+        }),
       });
+
+      const data = await response.json();
 
       const assistantMsg = {
         role: "assistant",
-        text: response.data.result,
+        text: data.result,
       };
 
       setMessages((prev) => [...prev, assistantMsg]);

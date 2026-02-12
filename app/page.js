@@ -110,7 +110,7 @@ export default function Home() {
             transition={{ delay: 0.5 }}
           >
             <Link href={'/workspace'}>
-              <Button variant="ghost" className="hidden md:flex text-gray-300 hover:text-white hover:bg-white/10">
+              <Button variant="ghost" className=" md:flex text-gray-300 hover:text-white hover:bg-white/10">
                 Log in
               </Button>
             </Link>

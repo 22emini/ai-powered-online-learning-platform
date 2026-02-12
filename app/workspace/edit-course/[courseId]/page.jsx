@@ -1,5 +1,5 @@
 "use client"
-import axios from 'axios';
+
 import { useParams } from 'next/navigation'
 import React, { useEffect, useState } from 'react'
 import CourseInfo from '../_components/CourseInfo';
@@ -17,9 +17,10 @@ const EditCourse = ({ viewCourse = false }) => {
         setLoading(true);
         setError(null);
         try{
-            const result = await axios.get('/api/courses?courseId='+courseId);
-            console.log(result.data);
-            setCourse(result.data);
+            const response = await fetch('/api/courses?courseId='+courseId);
+            const data = await response.json();
+            console.log(data);
+            setCourse(data);
         }catch(err){
             console.error('Failed to fetch course info', err);
             setError('Unable to load course details. Please try again.');

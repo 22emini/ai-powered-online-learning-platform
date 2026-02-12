@@ -4,7 +4,7 @@ export const usersTable = pgTable("users", {
   id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
   name: varchar("name", { length: 255 }).notNull(),
   email: varchar("email", { length: 255 }).notNull().unique(),
-  subscriptionId: varchar(" subscriptionId", { length: 255 }),
+  subscriptionId: varchar("subscriptionId", { length: 255 }),
 });
 
 export const coursesTable = pgTable("courses", {
@@ -12,7 +12,7 @@ export const coursesTable = pgTable("courses", {
   cid: varchar("cid", { length: 255 }).notNull().unique(),
   name: varchar("name", { length: 255 }),
   description: varchar("description", { length: 1000 }),
-  noOfChapters: integer("  noOfChapters").notNull(),
+  noOfChapters: integer("noOfChapters").notNull(),
   includeVideo: boolean("includeVideo").default(false),
   category: varchar("category", { length: 255 }).notNull(),
   courseJson: json("courseJson"),

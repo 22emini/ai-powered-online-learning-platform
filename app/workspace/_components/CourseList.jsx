@@ -3,7 +3,7 @@ import { Button } from '@/components/ui/button'
 import Image from 'next/image'
 import React, { useEffect, useState } from 'react'
 import AddNewCourseDiaglog from './AddNewCourseDiaglog'
-import axios from 'axios'
+
 import { useUser } from '@clerk/nextjs'
 import CourseCard from './CourseCard'
 
@@ -15,9 +15,20 @@ function CourseList() {
 
   },[user])
    const GetCourseList = async ()=>{
-    const result = await axios.get('/api/courses');
-    // console.log(result.data)
-    setCourseList(result.data)
+    try {
+      const response = await fetch('/api/courses');
+      if (!response.ok) {
+        console.error("Failed to fetch courses:", response.statusText);
+        setCourseList([]);
+        return;
+      }
+      const data = await response.json();
+      // console.log(data)
+      setCourseList(data)
+    } catch (error) {
+       console.error("Error fetching courses:", error);
+       setCourseList([]);
+    }
    }
   return (
     <div className='mt-10'>
@@ -35,7 +46,7 @@ function CourseList() {
       </div>:
       <div className=" grid grid-col-1 md:grid-col-2 lg:grid-cols-3 xl:grid-col-3 gap-1">
        {courseList?.map((course, index) => (
-        <CourseCard course={course}  key={index}/>
+        <CourseCard course={course} key={index} refreshCourses={GetCourseList} />
        ))}
       </div>
 }

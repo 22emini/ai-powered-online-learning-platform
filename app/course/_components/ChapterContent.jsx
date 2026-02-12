@@ -1,7 +1,7 @@
 "use client"
 import { Button } from '@/components/ui/button';
 import { SelectChapterIndexContext } from '@/context/SelectChapterIndexContext';
-import axios from 'axios';
+
 import { CheckCircle, Download, X } from 'lucide-react';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogFooter, DialogTrigger } from '@/components/ui/dialog';
 import { useParams } from 'next/navigation';
@@ -42,10 +42,17 @@ const ChapterContent = ({ courseInfo, refreshData } = {}) => {
     const updated = [...previous, selectedChapterIndex];
     setCompletedChapters(updated);
     try {
-      await axios.put('/api/enroll-course', {
-        courseId,
-        completedChapter: updated,
+      const response = await fetch('/api/enroll-course', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          courseId,
+          completedChapter: updated,
+        })
       });
+      if (!response.ok) throw new Error('Failed to update');
       refreshData?.();
       toast.success('Chapter marked as completed');
     } catch (err) {
@@ -65,10 +72,17 @@ const ChapterContent = ({ courseInfo, refreshData } = {}) => {
     const updated = previous.filter(i => i !== selectedChapterIndex);
     setCompletedChapters(updated);
     try {
-      await axios.put('/api/enroll-course', {
-        courseId,
-        completedChapter: updated,
+      const response = await fetch('/api/enroll-course', {
+        method: 'PUT',
+         headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          courseId,
+          completedChapter: updated,
+        })
       });
+      if (!response.ok) throw new Error('Failed to update');
       refreshData?.();
       toast.success('Chapter marked as incomplete');
     } catch (err) {
@@ -95,21 +109,35 @@ const ChapterContent = ({ courseInfo, refreshData } = {}) => {
     setQuizLoading(true);
     try {
         // Try Fetch
-        const fetchRes = await axios.post('/api/get-quiz', {
-            courseId: courseId,
-            chapterId: selectedChapterIndex
+        const fetchRes = await fetch('/api/get-quiz', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              courseId: courseId,
+              chapterId: selectedChapterIndex
+            })
         });
+        const fetchData = await fetchRes.json();
 
-        if (fetchRes.data.found) {
-            setQuiz(fetchRes.data.content);
+        if (fetchData.found) {
+            setQuiz(fetchData.content);
         } else {
         // Generate
-        const genRes = await axios.post('/api/generate-quiz', {
-          courseId: courseId,
-          chapterId: selectedChapterIndex,
-          chapterContent: currentChapter
+        const genRes = await fetch('/api/generate-quiz', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            courseId: courseId,
+            chapterId: selectedChapterIndex,
+            chapterContent: currentChapter
+          })
         });
-        setQuiz(genRes.data?.content ?? genRes.data);
+        const genData = await genRes.json();
+        setQuiz(genData?.content ?? genData);
         }
     } catch (e) {
         console.error(e);
@@ -148,11 +176,17 @@ const ChapterContent = ({ courseInfo, refreshData } = {}) => {
         
         if (diffSeconds > 0) {
             // Send time spent to API
-            axios.post('/api/analytics', {
-                courseId: courseId,
-                chapterId: selectedChapterIndex,
-                eventType: 'TIME_SPENT',
-                value: diffSeconds
+            fetch('/api/analytics', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    courseId: courseId,
+                    chapterId: selectedChapterIndex,
+                    eventType: 'TIME_SPENT',
+                    value: diffSeconds
+                })
             }).catch(e => console.error("Analytics error", e));
             
             // Reset start time to avoid double counting
@@ -166,11 +200,17 @@ const ChapterContent = ({ courseInfo, refreshData } = {}) => {
         const now = Date.now();
         const diffSeconds = Math.floor((now - startTimeRef.current) / 1000);
         if (diffSeconds > 1) { // Only send if significant
-            axios.post('/api/analytics', {
-                courseId: courseId,
-                chapterId: selectedChapterIndex,
-                eventType: 'TIME_SPENT',
-                value: diffSeconds
+            fetch('/api/analytics', {
+                method: 'POST',
+                 headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    courseId: courseId,
+                    chapterId: selectedChapterIndex,
+                    eventType: 'TIME_SPENT',
+                    value: diffSeconds
+                })
             }).catch(e => console.error("Analytics error", e));
         }
     };
@@ -196,11 +236,17 @@ const ChapterContent = ({ courseInfo, refreshData } = {}) => {
 
       // Analytics: Quiz Score
       try {
-        await axios.post('/api/analytics', {
-            courseId: courseId,
-            chapterId: selectedChapterIndex,
-            eventType: 'QUIZ_SCORE',
-            value: score
+        await fetch('/api/analytics', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                courseId: courseId,
+                chapterId: selectedChapterIndex,
+                eventType: 'QUIZ_SCORE',
+                value: score
+            })
         });
       } catch (e) {
           console.error("Failed to save quiz score", e);

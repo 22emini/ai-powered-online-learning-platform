@@ -5,7 +5,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
 import { Sparkles, Loader2, Copy, Check } from "lucide-react";
 import { toast } from "sonner";
-import axios from "axios";
+
 import { motion, AnimatePresence } from "framer-motion";
 
 const AISummarizerPage = () => {
@@ -23,12 +23,24 @@ const AISummarizerPage = () => {
     setLoading(true);
     setSummary("");
     try {
-      const response = await axios.post("/api/generate-summary", { text });
-      setSummary(response.data.result);
+      const response = await fetch("/api/generate-summary", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ text })
+      });
+      const data = await response.json();
+      
+      if (!response.ok) {
+        throw new Error(data.error || "Failed to generate summary");
+      }
+      
+      setSummary(data.result);
       toast.success("Summary generated successfully!");
     } catch (error) {
       console.error(error);
-      const errorMessage = error.response?.data?.error || "Failed to generate summary. Please try again.";
+      const errorMessage = error.message || "Failed to generate summary. Please try again.";
       toast.error(errorMessage);
     } finally {
       setLoading(false);

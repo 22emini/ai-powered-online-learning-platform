@@ -1,6 +1,6 @@
 "use client"
 import React, { useEffect, useState } from 'react'
-import axios from 'axios'
+
 import {
   BarChart,
   Bar,
@@ -24,8 +24,9 @@ const Analytics = () => {
 
     const fetchAnalytics = async () => {
         try {
-            const result = await axios.get('/api/analytics');
-            setData(result.data);
+            const response = await fetch('/api/analytics');
+            const data = await response.json();
+            setData(data);
         } catch (error) {
             console.error("Failed to fetch analytics", error);
         } finally {

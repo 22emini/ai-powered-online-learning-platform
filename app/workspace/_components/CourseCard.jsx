@@ -1,23 +1,40 @@
 import { Button } from '@/components/ui/button';
-import axios from 'axios';
-import { Book, LoaderCircle, PlayCircle, Settings } from 'lucide-react';
+
+import { Book, LoaderCircle, PlayCircle, Settings, Trash } from 'lucide-react';
 import Image from 'next/image'
 import Link from 'next/link';
 import React, { useState } from 'react'
 import { toast } from 'sonner';
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog"
 
-const CourseCard = ({ course }) => {
+const CourseCard = ({ course, refreshCourses }) => {
   const [loading, setLoading]= useState(false)
   const courseJson = course?.courseJson?.course;
   const hasContent = Boolean(course?.courseContent?.length);
  const onEnrollCourse = async () => {
    try {
      setLoading(true);
-     const result = await axios.post('/api/enroll-course', {
-       courseId: course?.cid,
+     const response = await fetch('/api/enroll-course', {
+       method: 'POST',
+       headers: {
+         'Content-Type': 'application/json',
+       },
+       body: JSON.stringify({
+         courseId: course?.cid,
+       })
      });
-     console.log(result.data);
-if(result.data.resp){
+     const data = await response.json();
+     console.log(data);
+if(data.resp){
   toast.warning('Already Enrolled!')
 }
      toast.success('Enrolled');
@@ -28,6 +45,24 @@ if(result.data.resp){
    } finally {
      setLoading(false);
    }
+ };
+
+ const handleDelete = async () => {
+  try {
+    setLoading(true);
+    const response = await fetch(`/api/courses?courseId=${course?.cid}`, {
+      method: 'DELETE'
+    });
+    if (response.ok) {
+      toast.success('Course deleted successfully');
+      refreshCourses && refreshCourses();
+    }
+  } catch (error) {
+    console.error(error);
+    toast.error('Failed to delete course');
+  } finally {
+    setLoading(false);
+  }
  };
 
   return (
@@ -64,7 +99,7 @@ if(result.data.resp){
             <span className="text-xs text-gray-400">By {course?.author ?? 'Unknown'}</span>
           </div>
 
-          <div>
+          <div className="flex gap-2">
             {hasContent ? (
         
                 <Button size="sm" disabled={loading} onClick={onEnrollCourse} className="flex items-center gap-2 px-2 py-1">
@@ -80,6 +115,33 @@ if(result.data.resp){
                 </Button>
               </Link>
             )}
+
+            <Dialog>
+              <DialogTrigger asChild>
+                <Button size="sm" variant="outline"  className="px-2 py-1 text-red-500 hover:text-red-600 hover:bg-red-50">
+                  <Trash className="h-3.5 w-3.5" />
+                </Button>
+              </DialogTrigger>
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>Are you absolutely sure?</DialogTitle>
+                  <DialogDescription>
+                    This action cannot be undone. This will permanently delete your course
+                    and remove your data from our servers.
+                  </DialogDescription>
+                </DialogHeader>
+                <DialogFooter>
+                  <DialogClose asChild>
+                    <Button type="button" variant="secondary">
+                      Cancel
+                    </Button>
+                  </DialogClose>
+                  <Button type="button" variant="destructive" onClick={handleDelete} disabled={loading}>
+                    {loading ? <LoaderCircle className="h-4 w-4 animate-spin" /> : 'Delete'} 
+                  </Button>
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
           </div>
         </div>
       </div>

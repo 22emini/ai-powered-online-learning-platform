@@ -54,32 +54,19 @@ export async function GET (req){
     
     return NextResponse.json(result[0])
      }
- else{
-    const  result = await db.select().from(coursesTable)
-    .innerJoin(enrollCourseTable,eq(coursesTable.cid,enrollCourseTable.cid))
-    .where(eq(enrollCourseTable.userEmail,user?.primaryEmailAddress.emailAddress))
-    .orderBy(desc(enrollCourseTable.id));
+ else {
+    if (!user || !user.primaryEmailAddress) {
+       return NextResponse.json([], { status: 200 });
+    }
 
-    
-          return NextResponse.json(result)
+    const result = await db.select().from(coursesTable)
+      .innerJoin(enrollCourseTable, eq(coursesTable.cid, enrollCourseTable.cid))
+      .where(eq(enrollCourseTable.userEmail, user.primaryEmailAddress.emailAddress))
+      .orderBy(desc(enrollCourseTable.id));
+
+    return NextResponse.json(result);
  }
-    const  result = await db.select().from(coursesTable)
-    .innerJoin(enrollCourseTable,eq(coursesTable.cid,enrollCourseTable.cid))
-    .where(eq(enrollCourseTable.userEmail,user?.primaryEmailAddress.emailAddress))
-    .orderBy(desc(enrollCourseTable.id));
 
-      // debug: log shape so frontend can normalize correctly
-      try {
-         console.log('[enroll-course GET] rows:', Array.isArray(result) ? result.length : 0);
-         if (Array.isArray(result) && result.length > 0) {
-            // show keys of first row to help identify shape
-            console.log('[enroll-course GET] sample keys:', Object.keys(result[0] || {}).slice(0, 20));
-         }
-      } catch (e) {
-         console.error('[enroll-course GET] logging failed', e);
-      }
-
-      return NextResponse.json(result)
 }
 
 export async function PUT (req){
