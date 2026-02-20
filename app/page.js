@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 import { BookOpen, Search, ArrowRight, Sparkles, Brain, Target, Zap, Users, BarChart3, Shield, Star } from "lucide-react"
 import Link from "next/link"
-import { motion } from "framer-motion"
+import { m, LazyMotion, domAnimation } from "framer-motion"
 import Image from "next/image";
 
 export default function Home() {
@@ -38,10 +38,11 @@ export default function Home() {
   };
 
   return (
+    <LazyMotion features={domAnimation}>
     <div className="min-h-screen bg-gradient-to-b from-[#051B34] via-[#072642] to-[#0A1F3F]">
       {/* Animated background elements */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none">
-        <motion.div
+        <m.div
           className="absolute top-20 left-10 w-72 h-72 bg-blue-400/10 rounded-full blur-3xl"
           animate={{
             scale: [1, 1.2, 1],
@@ -53,7 +54,7 @@ export default function Home() {
             ease: "easeInOut"
           }}
         />
-        <motion.div
+        <m.div
           className="absolute bottom-20 right-10 w-96 h-96 bg-cyan-400/10 rounded-full blur-3xl"
           animate={{
             scale: [1, 1.3, 1],
@@ -69,14 +70,14 @@ export default function Home() {
       </div>
 
       {/* Header */}
-      <motion.header
+      <m.header
         initial={{ y: -100 }}
         animate={{ y: 0 }}
         transition={{ duration: 0.6, ease: "easeOut" }}
         className="fixed top-0 left-0 right-0 z-50 border-b border-white/10 bg-[#051B34]/80 backdrop-blur-xl"
       >
         <div className="container mx-auto flex h-16 items-center justify-between px-4">
-          <motion.div
+          <m.div
             className="flex items-center gap-2"
             whileHover={{ scale: 1.05 }}
             transition={{ duration: 0.2 }}
@@ -85,11 +86,11 @@ export default function Home() {
             <Image src={'/new.png'} alt='logo' width={60} height={60} className="rounded-full object-cover" />
             
             <span className="text-xl font-bold bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent">Quorify</span>
-          </motion.div>
+          </m.div>
 
           <nav className="hidden items-center gap-8 md:flex">
             {["Features", "Courses", "Pricing", "About"].map((item, i) => (
-              <motion.a
+              <m.a
                 key={item}
                 href={`#${item.toLowerCase()}`}
                 className="text-sm text-gray-300 transition-colors hover:text-white relative group"
@@ -99,11 +100,11 @@ export default function Home() {
               >
                 {item}
                 <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-blue-400 transition-all group-hover:w-full" />
-              </motion.a>
+              </m.a>
             ))}
           </nav>
 
-          <motion.div
+          <m.div
             className="flex items-center gap-3"
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
@@ -115,29 +116,31 @@ export default function Home() {
               </Button>
             </Link>
            
-          </motion.div>
+          </m.div>
         </div>
-      </motion.header>
+      </m.header>
 
       <main>
         {/* Hero Section */}
-        <section className="relative overflow-hidden pt-32 pb-20">
-          <div className="container mx-auto px-4">
-            <motion.div
+        <section className="relative overflow-hidden pt-32 pb-20" style={{ backgroundImage: "url('/background.jpg')", backgroundSize: 'cover', backgroundPosition: 'center', backgroundRepeat: 'no-repeat' }}>
+          {/* Dark overlay for readability */}
+          <div className="absolute inset-0 bg-[#051B34]/75" />
+          <div className="container mx-auto px-4 relative z-10">
+            <m.div
               className="mx-auto max-w-4xl text-center"
               initial="initial"
               animate="animate"
               variants={staggerContainer}
             >
-              <motion.div
+              <m.div
                 variants={fadeInUp}
                 className="mb-6 inline-flex items-center gap-2 rounded-full border border-blue-400/30 bg-blue-400/10 px-4 py-1.5 text-sm text-blue-300 backdrop-blur-sm"
               >
                 <Sparkles className="h-4 w-4" />
                 <span>Powered by Google Gemini</span>
-              </motion.div>
+              </m.div>
 
-              <motion.h1
+              <m.h1
                 variants={fadeInUp}
                 className="mb-6 text-5xl font-bold leading-tight tracking-tight text-balance md:text-6xl lg:text-7xl text-white"
               >
@@ -146,19 +149,19 @@ export default function Home() {
                   AI-powered
                 </span>{" "}
                 personalized education
-              </motion.h1>
+              </m.h1>
 
-              <motion.p
+              <m.p
                 variants={fadeInUp}
                 className="mb-10 text-lg text-gray-300 text-pretty md:text-xl"
               >
                 Transform your learning journey with intelligent tutoring, adaptive courses, and real-time feedback.
                 Master any subject at your own pace with AI that understands how you learn best.
-              </motion.p>
+              </m.p>
 
           
 
-              <motion.div
+              <m.div
                 variants={fadeInUp}
                 className="mt-12 flex flex-wrap items-center justify-center gap-8 text-sm text-gray-400"
               >
@@ -167,22 +170,22 @@ export default function Home() {
                   "10,000+ active learners",
                   "500+ courses"
                 ].map((text, i) => (
-                  <motion.div
+                  <m.div
                     key={text}
                     className="flex items-center gap-2"
                     whileHover={{ scale: 1.05 }}
                   >
                     <div className="h-2 w-2 rounded-full bg-blue-400 animate-pulse" />
                     <span>{text}</span>
-                  </motion.div>
+                  </m.div>
                 ))}
-              </motion.div>
-            </motion.div>
+              </m.div>
+            </m.div>
           </div>
         </section>
 
         {/* Trusted By Section */}
-        <motion.section
+        <m.section
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
@@ -193,7 +196,7 @@ export default function Home() {
             <p className="mb-8 text-center text-sm font-medium uppercase tracking-wider text-gray-400">
               Trusted by students from leading institutions
             </p>
-            <motion.div
+            <m.div
               className="flex flex-wrap items-center justify-center gap-12"
               variants={staggerContainer}
               initial="initial"
@@ -201,22 +204,22 @@ export default function Home() {
               viewport={{ once: true }}
             >
               {["MIT", "Stanford", "Harvard", "Oxford", "Cambridge"].map((uni, i) => (
-                <motion.div
+                <m.div
                   key={uni}
                   variants={scaleIn}
                   className="text-2xl font-bold text-gray-400 hover:text-white transition-colors cursor-default"
                 >
                   {uni}
-                </motion.div>
+                </m.div>
               ))}
-            </motion.div>
+            </m.div>
           </div>
-        </motion.section>
+        </m.section>
 
         {/* Features Section */}
         <section className="py-24" id="features">
           <div className="container mx-auto px-4">
-            <motion.div
+            <m.div
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
@@ -230,9 +233,9 @@ export default function Home() {
                 Our platform combines cutting-edge AI technology with proven educational methods to deliver an unmatched
                 learning experience.
               </p>
-            </motion.div>
+            </m.div>
 
-            <motion.div
+            <m.div
               className="grid gap-6 md:grid-cols-2 lg:grid-cols-3"
               variants={staggerContainer}
               initial="initial"
@@ -271,30 +274,30 @@ export default function Home() {
                   description: "All courses are created and reviewed by industry experts and educators.",
                 },
               ].map((feature, i) => (
-                <motion.div key={feature.title} variants={scaleIn}>
+                <m.div key={feature.title} variants={scaleIn}>
                   <Card className="group relative overflow-hidden border-white/10 bg-[#0A1F3F]/50 backdrop-blur-sm p-6 transition-all hover:border-blue-400/50 hover:shadow-xl hover:shadow-blue-500/20 h-full">
-                    <motion.div
+                    <m.div
                       className="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-lg bg-gradient-to-br from-blue-400/20 to-cyan-400/20 text-blue-400 transition-all"
                       whileHover={{ scale: 1.1, rotate: 5 }}
                       transition={{ duration: 0.3 }}
                     >
                       <feature.icon className="h-6 w-6" />
-                    </motion.div>
+                    </m.div>
                     <h3 className="mb-2 text-xl font-semibold text-white">{feature.title}</h3>
                     <p className="text-gray-300 leading-relaxed">{feature.description}</p>
                     
                     <div className="absolute inset-0 bg-gradient-to-br from-blue-400/5 to-cyan-400/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500 -z-10" />
                   </Card>
-                </motion.div>
+                </m.div>
               ))}
-            </motion.div>
+            </m.div>
           </div>
         </section>
 
         {/* Stats Section */}
         <section className="bg-[#0A1F3F]/50 py-20">
           <div className="container mx-auto px-4">
-            <motion.div
+            <m.div
               className="grid gap-6 md:grid-cols-2 lg:grid-cols-4"
               variants={staggerContainer}
               initial="initial"
@@ -323,9 +326,9 @@ export default function Home() {
                   subtext: "Always available to help",
                 },
               ].map((stat) => (
-                <motion.div key={stat.label} variants={scaleIn}>
+                <m.div key={stat.label} variants={scaleIn}>
                   <Card className="border-white/10 bg-[#051B34]/50 backdrop-blur-sm p-8 text-center hover:shadow-lg hover:shadow-blue-500/10 transition-all">
-                    <motion.div
+                    <m.div
                       className="mb-2 text-4xl font-bold bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent md:text-5xl"
                       initial={{ scale: 0 }}
                       whileInView={{ scale: 1 }}
@@ -333,162 +336,28 @@ export default function Home() {
                       transition={{ duration: 0.5, type: "spring" }}
                     >
                       {stat.value}
-                    </motion.div>
+                    </m.div>
                     <div className="mb-1 text-lg font-semibold text-white">{stat.label}</div>
                     <div className="text-sm text-gray-400">{stat.subtext}</div>
                   </Card>
-                </motion.div>
+                </m.div>
               ))}
-            </motion.div>
+            </m.div>
           </div>
         </section>
 
-        {/* CTA Section */}
-        <section className="py-24">
-          <div className="container mx-auto px-4">
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95 }}
-              whileInView={{ opacity: 1, scale: 1 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6 }}
-              className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-blue-600 via-cyan-600 to-blue-600 bg-[length:200%_200%] animate-gradient p-12 md:p-16 lg:p-20 shadow-2xl"
-            >
-              <div className="relative z-10 mx-auto max-w-3xl text-center">
-                <motion.h2
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: 0.2 }}
-                  className="mb-6 text-4xl font-bold text-white text-balance md:text-5xl"
-                >
-                  Ready to transform your learning journey?
-                </motion.h2>
-                <motion.p
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: 0.3 }}
-                  className="mb-8 text-lg text-white/90 text-pretty"
-                >
-                  Join thousands of students already learning smarter with AI. Start your free trial today—no credit
-                  card required.
-                </motion.p>
-                <motion.div
-                  className="flex flex-col items-center justify-center gap-4 sm:flex-row"
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: 0.4 }}
-                >
-    <Button
-                    size="lg"
-                    className="group bg-white text-blue-600 hover:bg-gray-100 shadow-xl hover:shadow-2xl transition-all border-0"
-                  >
-                       <Link href="/workspace">   Get Started Free</Link>
-                 
-                    <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
-                  </Button>
-                
-                </motion.div>
-              </div>
-
-              <motion.div
-                className="absolute -right-20 -top-20 h-64 w-64 rounded-full bg-white/10 blur-3xl"
-                animate={{
-                  scale: [1, 1.2, 1],
-                  opacity: [0.3, 0.5, 0.3],
-                }}
-                transition={{
-                  duration: 5,
-                  repeat: Infinity,
-                  ease: "easeInOut"
-                }}
-              />
-              <motion.div
-                className="absolute -bottom-20 -left-20 h-64 w-64 rounded-full bg-white/10 blur-3xl"
-                animate={{
-                  scale: [1, 1.3, 1],
-                  opacity: [0.2, 0.4, 0.2],
-                }}
-                transition={{
-                  duration: 6,
-                  repeat: Infinity,
-                  ease: "easeInOut",
-                  delay: 1
-                }}
-              />
-            </motion.div>
-          </div>
-        </section>
+        
       </main>
 
-      {/* Footer */}
-      <footer className="border-t border-white/10 bg-[#0A1F3F]/50 py-12">
-        <div className="container mx-auto px-4">
-          <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-4">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-            >
-              <div className="mb-4 flex items-center gap-2">
-               
-            <Image src={'/new.png'} alt='logo' width={50} height={50} className="rounded-full object-cover" />
-            
-            <span className="text-xl font-bold bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent">Quorify</span>
-          
-               
-              </div>
-              <p className="text-sm text-gray-400 leading-relaxed">
-                AI that unlocks and amplifies your core learning potential.
-              </p>
-            </motion.div>
 
-            {[
-              {
-                title: "Product",
-                links: ["Features", "Courses", "Pricing", "Enterprise"]
-              },
-              {
-                title: "Company",
-                links: ["About", "Blog", "Careers", "Contact"]
-              },
-              {
-                title: "Legal",
-                links: ["Privacy", "Terms", "Security", "Cookies"]
-              }
-            ].map((section, i) => (
-              <motion.div
-                key={section.title}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.1 }}
-              >
-                <h3 className="mb-4 font-semibold text-white">{section.title}</h3>
-                <ul className="space-y-2 text-sm text-gray-400">
-                  {section.links.map((link) => (
-                    <li key={link}>
-                      <a href="#" className="transition-colors hover:text-white inline-block hover:translate-x-1 transition-transform">
-                        {link}
-                      </a>
-                    </li>
-                  ))}
-                </ul>
-              </motion.div>
-            ))}
-          </div>
-
-          <motion.div
+    <m.div
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
             viewport={{ once: true }}
-            className="mt-12 border-t border-white/10 pt-8 text-center text-sm text-gray-400"
+            className="mt-12 border-t pb-4 border-white/10 pt-8 text-center text-sm text-gray-400"
           >
-            <p>© 2025 Quorify. All rights reserved.</p>
-          </motion.div>
-        </div>
-      </footer>
+            <p>© 2026 Quorify. All rights reserved.</p>
+          </m.div>
 
       <style jsx global>{`
         @keyframes gradient {
@@ -508,5 +377,6 @@ export default function Home() {
         }
       `}</style>
     </div>
+    </LazyMotion>
   )
 }

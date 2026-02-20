@@ -2,7 +2,6 @@
 import { SelectChapterIndexContext } from '@/context/SelectChapterIndexContext';
 import { UserDetailContext } from '@/context/UserDetailContext';
 import { useUser } from '@clerk/nextjs'
-import axios from 'axios'
 import React, { useEffect, useState } from 'react'
 // this function is used store new user inside database
 function Provider({ children }) {
@@ -10,12 +9,24 @@ function Provider({ children }) {
   const [ userDetail , setUserDetail ] = useState();
   const [ selectedChapterIndex,setSelectedChapterIndex]= useState(0);
   const CreateNewUser = async () => {
-    const result = await axios.post('/api/user', {
-      name: user?.fullName,
-      email: user?.primaryEmailAddress?.emailAddress,
-    });
-    setUserDetail(result.data)
-    console.log(result.data);
+    try {
+      const response = await fetch('/api/user', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          name: user?.fullName,
+          email: user?.primaryEmailAddress?.emailAddress,
+        }),
+      });
+      if (!response.ok) throw new Error('Failed to create user');
+      const data = await response.json();
+      setUserDetail(data);
+      console.log(data);
+    } catch (error) {
+      console.error("Error creating user:", error);
+    }
   };
   useEffect(() => {
     user && CreateNewUser();

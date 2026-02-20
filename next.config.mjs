@@ -1,7 +1,12 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-    images:{
-        domains:['firebasestorage.googleapis.com','image.pollinations.ai','placehold.co','images.unsplash.com']
+    images: {
+        remotePatterns: [
+            { protocol: 'https', hostname: 'firebasestorage.googleapis.com' },
+            { protocol: 'https', hostname: 'image.pollinations.ai' },
+            { protocol: 'https', hostname: 'placehold.co' },
+            { protocol: 'https', hostname: 'images.unsplash.com' }
+        ]
     },
 };
 
