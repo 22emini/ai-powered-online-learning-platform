@@ -1,7 +1,7 @@
 import { db } from "@/config/db";
 import { coursesTable, enrollCourseTable } from "@/config/schema";
 import { currentUser } from "@clerk/nextjs/server";
-import { eq, and, desc } from "drizzle-orm";
+import { eq, and, desc, sql } from "drizzle-orm";
 import { NextResponse } from "next/server";
 
 export async function POST (req){
@@ -42,47 +42,49 @@ export async function POST (req){
 }
 
 export async function GET (req){
- const user =  await currentUser();
+  const user = await currentUser();
+  const { searchParams} = new URL (req.url);
+  const courseId = searchParams?.get('courseId');
+  const page = parseInt(searchParams?.get('page')) || 1;
+  const limit = parseInt(searchParams?.get('limit')) || 10;
+  const offset = (page - 1) * limit;
 
-    const { searchParams} = new URL (req.url);
-     const courseId = searchParams?.get('courseId');
+  if (!user || !user.primaryEmailAddress) {
+    return NextResponse.json({ data: [], pagination: { totalCount: 0, totalPages: 0, currentPage: 1, pageSize: limit } }, { status: 200 });
+  }
 
-     if(courseId){
-    if (!user || !user.primaryEmailAddress) {
-       return NextResponse.json([], { status: 200 });
-    }
+  if(courseId){
     const result = await db.select().from(coursesTable)
     .innerJoin(enrollCourseTable,eq(coursesTable.cid,enrollCourseTable.cid))
     .where(and(eq(enrollCourseTable.userEmail,user.primaryEmailAddress.emailAddress),eq(enrollCourseTable.cid,courseId)))
     
     return NextResponse.json(result[0])
-     }
- else{
-    const  result = await db.select().from(coursesTable)
-    .innerJoin(enrollCourseTable,eq(coursesTable.cid,enrollCourseTable.cid))
-    .where(eq(enrollCourseTable.userEmail,user?.primaryEmailAddress.emailAddress))
-    .orderBy(desc(enrollCourseTable.id));
-
+  } else {
+    // Total count for pagination
+    const totalCountResult = await db.select({ count: sql`count(*)` })
+      .from(coursesTable)
+      .innerJoin(enrollCourseTable, eq(coursesTable.cid, enrollCourseTable.cid))
+      .where(eq(enrollCourseTable.userEmail, user.primaryEmailAddress.emailAddress));
     
-          return NextResponse.json(result)
- }
-    const  result = await db.select().from(coursesTable)
-    .innerJoin(enrollCourseTable,eq(coursesTable.cid,enrollCourseTable.cid))
-    .where(eq(enrollCourseTable.userEmail,user?.primaryEmailAddress.emailAddress))
-    .orderBy(desc(enrollCourseTable.id));
+    const totalCount = totalCountResult[0].count;
 
-      // debug: log shape so frontend can normalize correctly
-      try {
-         console.log('[enroll-course GET] rows:', Array.isArray(result) ? result.length : 0);
-         if (Array.isArray(result) && result.length > 0) {
-            // show keys of first row to help identify shape
-            console.log('[enroll-course GET] sample keys:', Object.keys(result[0] || {}).slice(0, 20));
-         }
-      } catch (e) {
-         console.error('[enroll-course GET] logging failed', e);
+    const result = await db.select().from(coursesTable)
+      .innerJoin(enrollCourseTable,eq(coursesTable.cid,enrollCourseTable.cid))
+      .where(eq(enrollCourseTable.userEmail,user.primaryEmailAddress.emailAddress))
+      .limit(limit)
+      .offset(offset)
+      .orderBy(desc(enrollCourseTable.id));
+
+    return NextResponse.json({
+      data: result,
+      pagination: {
+        totalCount: Number(totalCount),
+        totalPages: Math.ceil(totalCount / limit),
+        currentPage: page,
+        pageSize: limit
       }
-
-      return NextResponse.json(result)
+    })
+  }
 }
 
 export async function PUT (req){

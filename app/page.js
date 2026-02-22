@@ -4,7 +4,7 @@ import { Card } from "@/components/ui/card"
 import { useAuth } from "@clerk/nextjs";
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
-import { BookOpen, Search, ArrowRight, Sparkles, Brain, Target, Zap, Users, BarChart3, Shield, Star } from "lucide-react"
+import { BookOpen, Search, ArrowRight, Sparkles, Brain, Target, Zap, Users, BarChart3, Shield, Star, Bot } from "lucide-react"
 import Link from "next/link"
 import { m, LazyMotion, domAnimation } from "framer-motion"
 import Image from "next/image";
@@ -136,7 +136,7 @@ export default function Home() {
                 variants={fadeInUp}
                 className="mb-6 inline-flex items-center gap-2 rounded-full border border-blue-400/30 bg-blue-400/10 px-4 py-1.5 text-sm text-blue-300 backdrop-blur-sm"
               >
-                <Sparkles className="h-4 w-4" />
+                <Bot className="h-4 w-4" />
                 <span>Powered by Google Gemini</span>
               </m.div>
 
