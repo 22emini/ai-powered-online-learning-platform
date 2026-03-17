@@ -107,11 +107,11 @@ function AddNewCourseDiaglog({ children }) {
         <Input placeholder="Enter number the of Chapters"  type="number" onChange={(event)=>onHandleInputChange('noOfChapters',event?.target.value)} />
   
           </div>
-          <div className=' flex gap-3 items-center'>
+          {/* <div className=' flex gap-3 items-center'>
             <label> Include video</label>
             <Switch    
                       onCheckedChange={()=>onHandleInputChange('includeVideo',!formData?.includeVideo)}/>
-          </div>
+          </div> */}
           <div>
             <label>Difficulty  Level</label>
             <Select className='mt-1' onValueChange={(value)=>onHandleInputChange('level',value)}>
