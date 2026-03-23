@@ -1,5 +1,6 @@
 'use client'
-import React from 'react'
+import React, { useContext } from 'react'
+import { UserProgressContext } from '@/app/context/UserProgressContext'
 import {
   Sidebar,
   SidebarContent,
@@ -13,13 +14,14 @@ import {
 } from "@/components/ui/sidebar"
 import Image from 'next/image'
 import { Button } from '@/components/ui/button'
-import { Book, ChartBar, Compass, LayoutDashboard, LogOutIcon, PencilRulerIcon, UserCircle2Icon } from 'lucide-react'
+import { Book, ChartBar, Compass, LayoutDashboard, LogOutIcon, PencilRulerIcon, UserCircle2Icon, Star, Target, Sparkles } from 'lucide-react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import AddNewCourseDiaglog from './AddNewCourseDiaglog'
 import { SignOutButton } from '@clerk/nextjs'
 function AppSideBar() {
-    const  SideBarOptions=[{
+    const { totalXP } = useContext(UserProgressContext);
+    const SideBarOptions = [{
         title:"Dashboard",
         icon:LayoutDashboard,
         path:'/workspace'
@@ -85,8 +87,34 @@ const path = usePathname();
             </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
-      <SidebarFooter>
-        <span className=' justify-start'><SignOutButton ><div className='flex items-center gap-2 cursor-pointer hover:text-red-500 '> <LogOutIcon className='h-7 w-7'/>Logout</div></SignOutButton></span>
+      <SidebarFooter className='px-4 pb-4'>
+        <div className='mb-6 p-4 rounded-2xl bg-gradient-to-br from-indigo-600 to-purple-700 text-white shadow-lg overflow-hidden relative'>
+             <div className='absolute -right-2 -bottom-2 opacity-10'>
+                <Target className='w-20 h-20' />
+             </div>
+             <div className='flex items-center gap-2 mb-2'>
+                <Star className='w-4 h-4 fill-white' />
+                <span className='text-[13px] font-bold uppercase tracking-wider'>Next Level</span>
+             </div>
+             <div className='flex justify-between items-end mb-1.5'>
+                <span className='text-xs opacity-80'>{totalXP % 1000} / 1000 XP</span>
+                <span className='text-xs font-bold'>{Math.floor((totalXP % 1000) / 10)}%</span>
+             </div>
+             <div className='w-full h-1.5 bg-white/20 rounded-full overflow-hidden'>
+                <div 
+                    className='h-full bg-white rounded-full transition-all duration-500' 
+                    style={{ width: `${(totalXP % 1000) / 10}%` }}
+                />
+             </div>
+             <p className='text-[10px] mt-2 opacity-70 font-medium'>Complete {Math.ceil((1000 - (totalXP % 1000)) / 100)} more missions to level up!</p>
+        </div>
+        <span className='justify-start'>
+            <SignOutButton>
+                <div className='flex items-center gap-2 cursor-pointer hover:text-red-500 font-medium transition-colors'> 
+                    <LogOutIcon className='h-6 w-6'/>Logout
+                </div>
+            </SignOutButton>
+        </span>
       </SidebarFooter>
     </Sidebar>
 

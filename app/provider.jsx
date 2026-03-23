@@ -3,11 +3,26 @@ import { SelectChapterIndexContext } from '@/context/SelectChapterIndexContext';
 import { UserDetailContext } from '@/context/UserDetailContext';
 import { useUser } from '@clerk/nextjs'
 import React, { useEffect, useState } from 'react'
-// this function is used store new user inside database
+import axios from 'axios'
+import { UserProgressContext } from '@/app/context/UserProgressContext'
+
 function Provider({ children }) {
   const { user } = useUser();
   const [ userDetail , setUserDetail ] = useState();
   const [ selectedChapterIndex,setSelectedChapterIndex]= useState(0);
+  const [userProgress, setUserProgress] = useState({ totalXP: 0, level: 1 });
+
+  const fetchUserProgress = async () => {
+    try {
+      const result = await axios.get('/api/analytics');
+      const xp = result.data.totalXP || 0;
+      const level = Math.floor(xp / 1000) + 1;
+      setUserProgress({ totalXP: xp, level: level });
+    } catch (error) {
+      console.error("Failed to fetch user progress", error);
+    }
+  }
+
   const CreateNewUser = async () => {
     try {
       const response = await fetch('/api/user', {
@@ -28,18 +43,24 @@ function Provider({ children }) {
       console.error("Error creating user:", error);
     }
   };
+
   useEffect(() => {
-    user && CreateNewUser();
+    if (user) {
+      CreateNewUser();
+      fetchUserProgress();
+    }
   }, [user]);
+
   return (
     <UserDetailContext.Provider value={{userDetail,setUserDetail}}>
       <SelectChapterIndexContext.Provider value={{ selectedChapterIndex,setSelectedChapterIndex}}>
- <div>
-      {children}
-    </div>
-    </SelectChapterIndexContext.Provider>
+        <UserProgressContext.Provider value={{ ...userProgress, refreshProgress: fetchUserProgress }}>
+          <div>
+            {children}
+          </div>
+        </UserProgressContext.Provider>
+      </SelectChapterIndexContext.Provider>
     </UserDetailContext.Provider>
-   
   );
 }
 

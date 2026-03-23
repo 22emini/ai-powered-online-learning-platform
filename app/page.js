@@ -256,7 +256,7 @@ export default function Home() {
                 {
                   icon: Zap,
                   title: "Real-Time Feedback",
-                  description: "Receive immediate feedback on assignments and quizzes to accelerate your learning.",
+                  description: "Receive immediate feedback through interactive roleplaying scenarios to accelerate your learning.",
                 },
                 {
                   icon: Users,

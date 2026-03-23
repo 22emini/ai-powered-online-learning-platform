@@ -54,10 +54,10 @@ const Analytics = () => {
         )
     }
 
-    const { totalTimeSpent, completedCoursesCount, quizScores } = data;
+    const { totalTimeSpent, completedCoursesCount, quizScores, totalXP } = data;
 
     const chartData = quizScores.map((item, index) => ({
-        name: `Quiz ${index + 1}`,
+        name: `Mission ${index + 1}`,
         score: item.value,
         date: new Date(item.createdAt).toLocaleDateString()
     })).reverse();
@@ -82,7 +82,7 @@ const Analytics = () => {
                 </p>
             </div>
 
-            <div className='grid grid-cols-1 md:grid-cols-3 gap-6 mb-12'>
+            <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12'>
                 <div className='p-6 bg-white dark:bg-zinc-900/90 rounded-[2rem] shadow-xl shadow-blue-900/5 dark:shadow-none border border-gray-100 dark:border-white/10 backdrop-blur-xl relative overflow-hidden group'>
                     <div className="absolute -top-10 -right-10 p-4 opacity-5">
                         <Timer className="w-48 h-48 text-blue-500" />
@@ -128,8 +128,25 @@ const Analytics = () => {
                             <Trophy className="w-7 h-7" />
                         </div>
                         <div>
-                            <h2 className='text-sm font-bold tracking-widest text-gray-500 dark:text-gray-400 uppercase mb-1'>Quizzes Taken</h2>
+                            <h2 className='text-sm font-bold tracking-widest text-gray-500 dark:text-gray-400 uppercase mb-1'>Missions Completed</h2>
                             <p className='text-5xl font-black text-gray-900 dark:text-white tracking-tight'>{quizScores.length}</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div className='p-6 bg-white dark:bg-zinc-900/90 rounded-[2rem] shadow-xl shadow-indigo-900/5 dark:shadow-none border border-gray-100 dark:border-white/10 backdrop-blur-xl relative overflow-hidden group'>
+                    <div className="absolute -top-10 -right-10 p-4 opacity-5">
+                        <Sparkles className="w-48 h-48 text-indigo-500" />
+                    </div>
+                    <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+
+                    <div className="relative z-10 flex flex-col h-full justify-between">
+                        <div className="w-14 h-14 bg-indigo-100 dark:bg-indigo-500/20 text-indigo-600 dark:text-indigo-400 rounded-2xl flex items-center justify-center mb-6 shadow-inner border border-indigo-200/50 dark:border-indigo-500/30">
+                            <Sparkles className="w-7 h-7" />
+                        </div>
+                        <div>
+                            <h2 className='text-sm font-bold tracking-widest text-gray-500 dark:text-gray-400 uppercase mb-1'>Total Experience (XP)</h2>
+                            <p className='text-5xl font-black text-gray-900 dark:text-white tracking-tight'>{totalXP || 0}</p>
                         </div>
                     </div>
                 </div>
@@ -143,7 +160,7 @@ const Analytics = () => {
                                 <div className="bg-purple-100 dark:bg-purple-500/20 p-2 rounded-lg text-purple-600 dark:text-purple-400">
                                     <TrendingUp className="w-6 h-6" />
                                 </div>
-                                Quiz Performance
+                                Roleplay Performance
                             </h2>
                             <p className="text-muted-foreground mt-2 font-medium">Your score trajectory over time.</p>
                         </div>

@@ -114,10 +114,25 @@ export async function GET(req) {
             .orderBy(desc(userAnalyticsTable.createdAt));
             //.limit(50); // Optional limit
 
+        // 4. Mission XP
+        const xpResult = await db.select({ 
+            totalXp: sql`sum(${userAnalyticsTable.value})` 
+        })
+        .from(userAnalyticsTable)
+        .where(
+            and(
+                eq(userAnalyticsTable.userEmail, userEmail),
+                eq(userAnalyticsTable.eventType, 'MISSION_XP')
+            )
+        );
+
+        const totalXP = xpResult[0]?.totalXp ? parseInt(xpResult[0].totalXp) : 0;
+
         return NextResponse.json({ 
             totalTimeSpent, 
             completedCoursesCount, 
-            quizScores 
+            quizScores,
+            totalXP
         });
 
     } catch (error) {

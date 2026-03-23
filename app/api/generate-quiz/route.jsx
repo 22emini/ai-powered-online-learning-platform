@@ -7,8 +7,10 @@ import { eq, and } from "drizzle-orm";
 import { ai } from "../generate-course-layout/route";
 
 const PROMPT = `
-Generate a quiz with 10 multiple-choice questions based on the provided chapter content.
-For each question, provide 4 options and identify the correct answer.
+Generate an engaging AI-powered gamification (roleplaying) scenario with 10 interactive text-based situations (formatted as multiple-choice questions) based on the provided chapter content.
+Instead of standard quiz questions, place the user in realistic roleplaying situations related to the chapter content. For example, if the topic is Cybersecurity, a scenario might be: "A hacker is attacking the company server via SQL inject. What command do you run to prevent this?"
+
+For each scenario, provide 4 options (actions the user can take) and identify the correct action as the answer.
 
 Output strictly in JSON format matching the following schema:
 {
