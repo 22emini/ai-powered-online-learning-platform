@@ -184,38 +184,7 @@ export default function Home() {
           </div>
         </section>
 
-        {/* Trusted By Section */}
-        <m.section
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-          className="border-y border-white/10 bg-[#0A1F3F]/50 py-12"
-        >
-          <div className="container mx-auto px-4">
-            <p className="mb-8 text-center text-sm font-medium uppercase tracking-wider text-gray-400">
-              Trusted by students from leading institutions
-            </p>
-            <m.div
-              className="flex flex-wrap items-center justify-center gap-12"
-              variants={staggerContainer}
-              initial="initial"
-              whileInView="animate"
-              viewport={{ once: true }}
-            >
-              {["MIT", "Stanford", "Harvard", "Oxford", "Cambridge"].map((uni, i) => (
-                <m.div
-                  key={uni}
-                  variants={scaleIn}
-                  className="text-2xl font-bold text-gray-400 hover:text-white transition-colors cursor-default"
-                >
-                  {uni}
-                </m.div>
-              ))}
-            </m.div>
-          </div>
-        </m.section>
-
+        
         {/* Features Section */}
         <section className="py-24" id="features">
           <div className="container mx-auto px-4">
